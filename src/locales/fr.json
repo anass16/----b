@@ -1,0 +1,116 @@
+{
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "employees": "Employés",
+    "attendance": "Présence",
+    "leave": "Congés",
+    "analytics": "Analyses",
+    "imports": "Imports",
+    "settings": "Paramètres"
+  },
+  "buttons": {
+    "create": "Créer",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "export": "Exporter",
+    "import": "Importer",
+    "upload": "Télécharger",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "reset": "Réinitialiser",
+    "confirm": "Confirmer",
+    "close": "Fermer",
+    "viewReports": "Voir les rapports",
+    "goToCalendar": "Aller au calendrier",
+    "addTask": "Ajouter une tâche",
+    "viewDetails": "Voir les détails",
+    "correctFile": "Corriger le fichier",
+    "recomputeNow": "Recalculer maintenant",
+    "downloadReport": "Télécharger le rapport",
+    "deleteHistory": "Supprimer l'historique",
+    "undoDelete": "Annuler la suppression",
+    "prevMonth": "Mois précédent",
+    "nextMonth": "Mois suivant",
+    "addAbsence": "Ajouter une absence",
+    "bulkRange": "Plage en bloc"
+  },
+  "kpi": {
+    "daysWorked": "Jours travaillés",
+    "daysAbsent": "Jours d'absence",
+    "totalHours": "Heures totales",
+    "avgDelay": "Retard moyen",
+    "lateDays": "Jours de retard",
+    "minorDelays": "Retards mineurs",
+    "holidaysWorked": "Jours fériés travaillés",
+    "delta": "Delta"
+  },
+  "alerts": {
+    "success": "Opération terminée avec succès",
+    "error": "Une erreur s'est produite",
+    "loading": "Chargement...",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cet élément ?",
+    "deleteHistoryConfirm": "Êtes-vous sûr de vouloir supprimer cet historique d'import ?",
+    "uploadSuccess": "Fichier téléchargé avec succès",
+    "exportSuccess": "Données exportées avec succès",
+    "saveSuccess": "Modifications enregistrées avec succès"
+  },
+  "imports": {
+    "uploadFile": "Télécharger un fichier",
+    "viewReport": "Voir le rapport",
+    "deleteHistory": "Supprimer l'historique",
+    "downloadUnmatched": "Télécharger non appariés",
+    "matchedRows": "Lignes appariées",
+    "unmatchedRows": "Lignes non appariées",
+    "warnings": "Avertissements",
+    "period": "Période",
+    "softDelete": "Suppression douce",
+    "hardDelete": "Suppression définitive",
+    "rollback": "Annulation"
+  },
+  "abs": {
+    "reason": {
+      "sick": "Congé maladie",
+      "vacation": "Vacances",
+      "personal": "Congé personnel",
+      "maternity": "Congé maternité",
+      "bereavement": "Congé de deuil",
+      "training": "Formation",
+      "other": "Autre"
+    }
+  },
+  "employee": {
+    "matricule": "Matricule",
+    "name": "Nom",
+    "department": "Département",
+    "role": "Rôle",
+    "status": "Statut",
+    "worksSaturday": "Travaille le samedi",
+    "createdAt": "Créé le"
+  },
+  "attendance": {
+    "date": "Date",
+    "firstIn": "Première entrée",
+    "lastOut": "Dernière sortie",
+    "hours": "Heures",
+    "delay": "Retard",
+    "status": "Statut",
+    "onTime": "À l'heure",
+    "late": "En retard",
+    "absent": "Absent",
+    "holiday": "Jour férié"
+  },
+  "common": {
+    "loading": "Chargement...",
+    "noData": "Aucune donnée disponible",
+    "total": "Total",
+    "average": "Moyenne",
+    "today": "Aujourd'hui",
+    "thisMonth": "Ce mois",
+    "lastMonth": "Le mois dernier",
+    "overview": "Aperçu",
+    "details": "Détails",
+    "actions": "Actions"
+  }
+}

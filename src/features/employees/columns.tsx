@@ -1,0 +1,67 @@
+import { ColumnDef } from '@tanstack/react-table'
+import { User } from '@/lib/data'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { MoreHorizontal, Edit, Trash2, Eye } from 'lucide-react'
+
+interface ColumnsProps {
+  onEdit: (employee: User) => void;
+  onDelete: (matricule: string) => void;
+  onViewProfile: (matricule: string) => void;
+}
+
+export const columns = ({ onEdit, onDelete, onViewProfile }: ColumnsProps): ColumnDef<User>[] => [
+  {
+    accessorKey: 'matricule',
+    header: 'Matricule',
+  },
+  {
+    accessorKey: 'name',
+    header: 'Name',
+  },
+  {
+    accessorKey: 'department',
+    header: 'Department',
+  },
+  {
+    accessorKey: 'role',
+    header: 'Role',
+    cell: ({ row }) => <Badge variant="secondary">{row.original.role}</Badge>,
+  },
+  {
+    accessorKey: 'status',
+    header: 'Status',
+    cell: ({ row }) => {
+      const isActive = row.original.status === 'Active';
+      return <Badge variant={isActive ? 'success' : 'destructive'}>{row.original.status}</Badge>
+    },
+  },
+  {
+    id: 'actions',
+    cell: ({ row }) => {
+      const employee = row.original
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => onViewProfile(employee.matricule)}>
+              <Eye className="mr-2 h-4 w-4" /> View Profile
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onEdit(employee)}>
+              <Edit className="mr-2 h-4 w-4" /> Edit
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onDelete(employee.matricule)} className="text-red-600">
+              <Trash2 className="mr-2 h-4 w-4" /> Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )
+    },
+  },
+]

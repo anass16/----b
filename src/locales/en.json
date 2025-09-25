@@ -1,0 +1,116 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "employees": "Employees",
+    "attendance": "Attendance",
+    "leave": "Leave",
+    "analytics": "Analytics",
+    "imports": "Imports",
+    "settings": "Settings"
+  },
+  "buttons": {
+    "create": "Create",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "cancel": "Cancel",
+    "export": "Export",
+    "import": "Import",
+    "upload": "Upload",
+    "search": "Search",
+    "filter": "Filter",
+    "reset": "Reset",
+    "confirm": "Confirm",
+    "close": "Close",
+    "viewReports": "View Reports",
+    "goToCalendar": "Go to Calendar",
+    "addTask": "Add Task",
+    "viewDetails": "View Details",
+    "correctFile": "Correct File",
+    "recomputeNow": "Recompute Now",
+    "downloadReport": "Download Report",
+    "deleteHistory": "Delete History",
+    "undoDelete": "Undo Delete",
+    "prevMonth": "Previous Month",
+    "nextMonth": "Next Month",
+    "addAbsence": "Add Absence",
+    "bulkRange": "Bulk Range"
+  },
+  "kpi": {
+    "daysWorked": "Days Worked",
+    "daysAbsent": "Days Absent",
+    "totalHours": "Total Hours",
+    "avgDelay": "Avg Delay",
+    "lateDays": "Late Days",
+    "minorDelays": "Minor Delays",
+    "holidaysWorked": "Holidays Worked",
+    "delta": "Delta"
+  },
+  "alerts": {
+    "success": "Operation completed successfully",
+    "error": "An error occurred",
+    "loading": "Loading...",
+    "deleteConfirm": "Are you sure you want to delete this item?",
+    "deleteHistoryConfirm": "Are you sure you want to delete this import history?",
+    "uploadSuccess": "File uploaded successfully",
+    "exportSuccess": "Data exported successfully",
+    "saveSuccess": "Changes saved successfully"
+  },
+  "imports": {
+    "uploadFile": "Upload File",
+    "viewReport": "View Report",
+    "deleteHistory": "Delete History",
+    "downloadUnmatched": "Download Unmatched",
+    "matchedRows": "Matched Rows",
+    "unmatchedRows": "Unmatched Rows",
+    "warnings": "Warnings",
+    "period": "Period",
+    "softDelete": "Soft Delete",
+    "hardDelete": "Hard Delete",
+    "rollback": "Rollback"
+  },
+  "abs": {
+    "reason": {
+      "sick": "Sick Leave",
+      "vacation": "Vacation",
+      "personal": "Personal Leave",
+      "maternity": "Maternity Leave",
+      "bereavement": "Bereavement",
+      "training": "Training",
+      "other": "Other"
+    }
+  },
+  "employee": {
+    "matricule": "Matricule",
+    "name": "Name",
+    "department": "Department",
+    "role": "Role",
+    "status": "Status",
+    "worksSaturday": "Works Saturday",
+    "createdAt": "Created At"
+  },
+  "attendance": {
+    "date": "Date",
+    "firstIn": "First In",
+    "lastOut": "Last Out",
+    "hours": "Hours",
+    "delay": "Delay",
+    "status": "Status",
+    "onTime": "On Time",
+    "late": "Late",
+    "absent": "Absent",
+    "holiday": "Holiday"
+  },
+  "common": {
+    "loading": "Loading...",
+    "noData": "No data available",
+    "total": "Total",
+    "average": "Average",
+    "today": "Today",
+    "thisMonth": "This Month",
+    "lastMonth": "Last Month",
+    "overview": "Overview",
+    "details": "Details",
+    "actions": "Actions"
+  }
+}
