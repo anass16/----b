@@ -1,5 +1,5 @@
-import React from 'react'
-import { FileText, Download, Users, Clock, TrendingUp, AlertCircle } from 'lucide-react'
+import React, { useMemo } from 'react'
+import { FileText, Download, Users, Clock, TrendingUp, AlertCircle, Loader2 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { useLang } from '@/hooks/useLang'
@@ -13,43 +13,103 @@ export function Dashboard() {
 
   const { data: summary, isLoading: isSummaryLoading } = useQuery({
     queryKey: ['analyticsSummary'],
-    queryFn: analyticsApi.getSummary
+    queryFn: analyticsApi.getSummary,
+    staleTime: 0, // Always refetch for latest data
   })
 
   const { data: analyticsData, isLoading: isAnalyticsLoading } = useQuery({
     queryKey: ['analyticsData'],
     queryFn: analyticsApi.getAnalyticsData,
+    staleTime: 0, // Always refetch for latest data
   })
+
+  const processedDeptData = useMemo(() => {
+    if (!analyticsData?.departmentDistribution) {
+      return { categories: [], data: [], total: 0 };
+    }
+
+    const sortedData = [...analyticsData.departmentDistribution].sort((a, b) => b.value - a.value);
+    const total = sortedData.reduce((sum, item) => sum + item.value, 0);
+
+    let displayData = sortedData;
+    if (sortedData.length > 8) {
+      const top7 = sortedData.slice(0, 7);
+      const otherValue = sortedData.slice(7).reduce((sum, item) => sum + item.value, 0);
+      displayData = [...top7, { name: 'Other', value: otherValue }];
+    }
+
+    // Reverse for horizontal bar chart display (largest on top)
+    displayData.reverse();
+
+    return {
+      categories: displayData.map(item => item.name),
+      data: displayData.map(item => item.value),
+      total,
+    };
+  }, [analyticsData]);
 
   // Chart options
   const attendanceChartOptions = {
     tooltip: { trigger: 'axis' },
-    xAxis: { type: 'category', data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] },
-    yAxis: { type: 'value' },
-    series: [{ data: [85, 92, 88, 90, 87, 45, 0], type: 'line', smooth: true, areaStyle: {} }],
+    xAxis: { type: 'category', data: analyticsData?.weeklyAttendanceTrend.map(d => d.day) || [] },
+    yAxis: { type: 'value', name: 'Present Employees' },
+    series: [{ data: analyticsData?.weeklyAttendanceTrend.map(d => d.presentCount) || [], type: 'line', smooth: true, areaStyle: {} }],
     grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true }
   }
 
   const departmentChartOptions = {
-    tooltip: { trigger: 'item' },
-    legend: { top: '5%', left: 'center' },
-    series: [{
-      type: 'pie',
-      radius: ['40%', '70%'],
-      avoidLabelOverlap: false,
-      label: { show: false, position: 'center' },
-      emphasis: { label: { show: true, fontSize: '20', fontWeight: 'bold' } },
-      labelLine: { show: false },
-      data: analyticsData?.departmentDistribution || []
-    }]
-  }
+    color: ['#83a6ed', '#8e98ee', '#a288e4', '#b978d9', '#d068c8', '#e758b4', '#fd469d', '#ff3185'],
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: { type: 'shadow' },
+      formatter: (params: any) => {
+        const data = params[0];
+        const percent = processedDeptData.total > 0 ? ((data.value / processedDeptData.total) * 100).toFixed(1) : 0;
+        return `${data.name}: <strong>${data.value}</strong> employees (${percent}%)`;
+      }
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      containLabel: true
+    },
+    xAxis: {
+      type: 'value',
+      boundaryGap: [0, 0.01],
+      axisLabel: { show: false },
+      splitLine: { show: false },
+    },
+    yAxis: {
+      type: 'category',
+      data: processedDeptData.categories,
+      axisTick: { show: false },
+      axisLine: { show: false },
+    },
+    series: [
+      {
+        name: 'Employees',
+        type: 'bar',
+        data: processedDeptData.data,
+        barMaxWidth: 30,
+        label: {
+          show: true,
+          position: 'right',
+          color: 'inherit',
+          formatter: '{c}'
+        },
+      }
+    ]
+  };
 
   const kpiCards = [
-    { title: 'Total Employees', value: summary?.totalEmployees, change: '+2.5%', icon: Users },
-    { title: 'Present Today', value: summary?.presentToday, change: '93.7% rate', icon: Clock },
-    { title: 'Late Arrivals', value: summary?.lateArrivals, change: '-12%', icon: AlertCircle },
-    { title: 'Avg Work Hours', value: `${summary?.avgWorkHours}h`, change: '+0.3h', icon: TrendingUp },
+    { title: 'Total Employees', value: summary?.totalEmployees, icon: Users },
+    { title: 'Present Today', value: summary?.presentToday, icon: Clock },
+    { title: 'Late Arrivals Today', value: summary?.lateArrivals, icon: AlertCircle },
+    { title: 'Avg Monthly Hours', value: `${summary?.avgWorkHours}h`, icon: TrendingUp },
   ]
+
+  const isLoading = isSummaryLoading || isAnalyticsLoading;
 
   return (
     <div className="space-y-6">
@@ -73,8 +133,7 @@ export function Dashboard() {
                 <card.icon className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                {isSummaryLoading ? <div className="h-8 w-24 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" /> : <div className="text-2xl font-bold">{card.value}</div>}
-                <p className="text-xs text-muted-foreground">{card.change}</p>
+                {isLoading ? <div className="h-8 w-24 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" /> : <div className="text-2xl font-bold">{card.value}</div>}
               </CardContent>
             </Card>
           </motion.div>
@@ -88,7 +147,13 @@ export function Dashboard() {
               <CardTitle>Weekly Attendance Trend</CardTitle>
             </CardHeader>
             <CardContent>
-              <ReactECharts option={attendanceChartOptions} style={{ height: '300px' }} />
+              {isLoading ? (
+                <div className="flex items-center justify-center h-[300px]">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                </div>
+              ) : (
+                <ReactECharts option={attendanceChartOptions} style={{ height: '300px' }} />
+              )}
             </CardContent>
           </Card>
         </motion.div>
@@ -98,7 +163,13 @@ export function Dashboard() {
               <CardTitle>Employees by Department</CardTitle>
             </CardHeader>
             <CardContent>
-              {isAnalyticsLoading ? <div className="h-[300px] w-full bg-gray-200 dark:bg-gray-700 rounded animate-pulse" /> : <ReactECharts option={departmentChartOptions} style={{ height: '300px' }} />}
+              {isLoading ? (
+                <div className="flex items-center justify-center h-[300px]">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                </div>
+              ) : (
+                <ReactECharts option={departmentChartOptions} style={{ height: '300px' }} />
+              )}
             </CardContent>
           </Card>
         </motion.div>

@@ -111,6 +111,9 @@
     "lastMonth": "Last Month",
     "overview": "Overview",
     "details": "Details",
-    "actions": "Actions"
+    "actions": "Actions",
+    "online": "Online",
+    "offline": "Offline",
+    "hourFormat24": "24-Hour Format"
   }
 }

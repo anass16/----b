@@ -1,11 +1,12 @@
 import { User, initialMockEmployees, initialMockLeaveRequests } from '@/lib/data';
-import { LeaveRequest } from "@/types";
+import { LeaveRequest, AttendanceRecord } from "@/types";
 
 const DB_STORAGE_KEY = 'hr_app_database';
 
 interface Database {
   employees: User[];
   leaveRequests: LeaveRequest[];
+  attendance: AttendanceRecord[];
 }
 
 // --- Private Functions ---
@@ -20,7 +21,11 @@ function readDatabase(): Database {
     console.error("Failed to parse database from localStorage", error);
   }
   // Return default structure if not found or error
-  return { employees: initialMockEmployees, leaveRequests: initialMockLeaveRequests };
+  return { 
+    employees: initialMockEmployees, 
+    leaveRequests: initialMockLeaveRequests,
+    attendance: [],
+  };
 }
 
 function writeDatabase(db: Database): void {
@@ -33,6 +38,7 @@ function initializeDatabase() {
         writeDatabase({
             employees: initialMockEmployees,
             leaveRequests: initialMockLeaveRequests,
+            attendance: [],
         });
     }
 }
@@ -97,15 +103,14 @@ export const localDB = {
       return { success: true };
     },
     overwriteAll(newEmployees: User[]): void {
-      const db = {
-        employees: newEmployees,
-        leaveRequests: []
-      };
+      const db = readDatabase();
+      db.employees = newEmployees;
+      db.attendance = []; // Clear attendance when employees are overwritten
       writeDatabase(db);
     },
-    getMatriculesSet(): Set<string> {
+    getMatriculesMap(): Map<string, User> {
       const db = readDatabase();
-      return new Set(db.employees.map(e => e.matricule));
+      return new Map(db.employees.map(e => [e.matricule, e]));
     }
   },
   leave: {
@@ -135,6 +140,24 @@ export const localDB = {
         });
         writeDatabase(db);
         return updatedRequest;
+    }
+  },
+  attendance: {
+    async getAll(): Promise<AttendanceRecord[]> {
+      await delay(100);
+      const db = readDatabase();
+      return db.attendance;
+    },
+    async overwriteAll(data: AttendanceRecord[]): Promise<void> {
+      await delay(300);
+      const db = readDatabase();
+      db.attendance = data;
+      writeDatabase(db);
+    },
+    async clearAll(): Promise<void> {
+      const db = readDatabase();
+      db.attendance = [];
+      writeDatabase(db);
     }
   },
   auth: {

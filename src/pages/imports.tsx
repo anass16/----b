@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { UploadCloud, AlertTriangle, CheckCircle, List, Building, Download, Upload, X, Loader2 } from 'lucide-react';
+import { UploadCloud, AlertTriangle, CheckCircle, List, FileText, Download, Upload, X, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQueryClient } from '@tanstack/react-query';
@@ -9,55 +9,15 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DataTable } from '@/components/ui/data-table';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-
-import { parseEmployeesFromFile, rebuildCorrectedWorkbook } from '@/utils/parseEmployeesFromExcel';
+import { parseAttendanceFromFile, downloadUnmatchedRowsAsCSV } from '@/utils/parseAttendanceFromExcel';
 import { localDB } from '@/lib/local-db';
-import { ParseResult, ParsedEmployeeRow } from '@/types';
-import { User } from '@/lib/data';
-import { ColumnDef } from '@tanstack/react-table';
+import { AttendanceParseResult, ParsedAttendanceRow } from '@/types';
+import { columns } from '@/features/attendance/import-columns';
 
-const StatusCell = ({ row }: { row: { original: ParsedEmployeeRow } }) => {
-  const employee = row.original;
-  const hasErrors = employee.__errors.length > 0;
-
-  if (hasErrors) {
-    return (
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger>
-            <AlertTriangle className="h-5 w-5 text-red-500 cursor-help" />
-          </TooltipTrigger>
-          <TooltipContent>
-            <ul className="list-disc pl-4">
-              {employee.__errors.map((err, i) => <li key={i}>{err}</li>)}
-            </ul>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    );
-  }
-  return <CheckCircle className="h-5 w-5 text-green-500" />;
-};
-
-const columns: ColumnDef<ParsedEmployeeRow>[] = [
-  { id: 'validationStatus', header: 'Status', cell: StatusCell },
-  { accessorKey: 'matricule', header: 'Matricule' },
-  { accessorKey: 'firstName', header: 'First Name' },
-  { accessorKey: 'lastName', header: 'Last Name' },
-  { accessorKey: 'department', header: 'Department' },
-  { accessorKey: 'email', header: 'Email' },
-  { accessorKey: 'status', header: 'Emp. Status' },
-];
-
-export function EmployeeImportPage() {
+export function AttendanceImportPage() {
   const [file, setFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [parseResult, setParseResult] = useState<ParseResult | null>(null);
-  const [filterText, setFilterText] = useState('');
-  const [filterDepartment, setFilterDepartment] = useState('all');
+  const [parseResult, setParseResult] = useState<AttendanceParseResult | null>(null);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
@@ -69,11 +29,11 @@ export function EmployeeImportPage() {
     setParseResult(null);
 
     try {
-      const result = await parseEmployeesFromFile(droppedFile);
+      const result = await parseAttendanceFromFile(droppedFile);
       if (result.errors.length > 0) {
         toast.error(result.errors[0]);
       } else {
-        toast.success(`Parsed ${result.stats.total} rows (${result.stats.valid} valid, ${result.stats.invalid} invalid)`);
+        toast.success(`Parsed ${result.stats.total} rows. ${result.stats.matched} matched, ${result.stats.unmatched} unmatched.`);
       }
       setParseResult(result);
     } catch (error) {
@@ -90,74 +50,47 @@ export function EmployeeImportPage() {
     maxFiles: 1,
   });
 
-  const handleImport = () => {
-    if (!parseResult || parseResult.stats.valid === 0) return;
-    const validRows = parseResult.rows.filter(r => r.__errors.length === 0);
+  const handleImport = async () => {
+    if (!parseResult || parseResult.stats.matched === 0) return;
     
-    const newUsers: User[] = validRows.map(row => ({
-      id: row.matricule!,
-      matricule: row.matricule!,
-      firstName: row.firstName!,
-      lastName: row.lastName!,
-      name: `${row.firstName} ${row.lastName}`.trim(),
-      department: row.department || 'Unassigned',
-      email: row.email,
-      phone: row.phone,
-      hireDate: row.hireDate,
-      status: row.status || 'Active',
-      role: 'EMPLOYEE',
-      worksSaturday: false,
-      createdAt: new Date().toISOString(),
-    }));
+    setIsLoading(true);
+    try {
+      await localDB.attendance.overwriteAll(parseResult.processedRecords);
+      toast.success(`Import successful! ${parseResult.stats.matched} records saved. Refreshing dashboard...`);
+      
+      // Invalidate all relevant queries to force a full app refresh
+      await queryClient.invalidateQueries();
 
-    localDB.employees.overwriteAll(newUsers);
-    
-    toast.success(`Import successful! ${newUsers.length} employees added. Refreshing all app data...`);
-    
-    // Invalidate all relevant queries to force a full app refresh
-    queryClient.invalidateQueries({ queryKey: ['employees'] });
-    queryClient.invalidateQueries({ queryKey: ['analyticsSummary'] });
-    queryClient.invalidateQueries({ queryKey: ['analyticsData'] });
-    queryClient.invalidateQueries({ queryKey: ['leaveRequests'] });
-    queryClient.invalidateQueries({ queryKey: ['attendance'] }); // Invalidate all attendance queries
-
-    handleReset();
-    navigate('/employees');
+      handleReset();
+      navigate('/');
+    } catch (error) {
+      toast.error("An error occurred during the import process.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleDownloadCorrected = () => {
-    if (!parseResult) return;
-    rebuildCorrectedWorkbook(parseResult.rows);
+  const handleDownloadUnmatched = () => {
+    if (!parseResult || !parseResult.unmatchedRows) return;
+    downloadUnmatchedRowsAsCSV(parseResult.unmatchedRows);
   };
 
   const handleReset = () => {
     setFile(null);
     setParseResult(null);
-    setFilterText('');
-    setFilterDepartment('all');
   };
-
-  const filteredData = useMemo(() => {
-    if (!parseResult) return [];
-    return parseResult.rows.filter(row => {
-      const matchesDept = filterDepartment === 'all' || row.department === filterDepartment;
-      const matchesText = filterText === '' ||
-        Object.values(row).some(val => String(val).toLowerCase().includes(filterText.toLowerCase()));
-      return matchesDept && matchesText;
-    });
-  }, [parseResult, filterText, filterDepartment]);
 
   const statCards = [
     { title: "Total Rows", value: parseResult?.stats.total, icon: List },
-    { title: "Valid Rows", value: parseResult?.stats.valid, icon: CheckCircle, color: "text-green-500" },
-    { title: "Invalid Rows", value: parseResult?.stats.invalid, icon: AlertTriangle, color: "text-red-500" },
-    { title: "Departments", value: parseResult?.stats.departments.length, icon: Building },
+    { title: "Matched Rows", value: parseResult?.stats.matched, icon: CheckCircle, color: "text-green-500" },
+    { title: "Unmatched Rows", value: parseResult?.stats.unmatched, icon: AlertTriangle, color: "text-red-500" },
+    { title: "Period", value: parseResult ? `${parseResult.stats.period.start} to ${parseResult.stats.period.end}` : 'N/A', icon: FileText },
   ];
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Import Employees</h1>
+        <h1 className="text-3xl font-bold">Import Attendance</h1>
         {parseResult && (
           <Button variant="outline" onClick={handleReset}><X className="mr-2 h-4 w-4" /> Start Over</Button>
         )}
@@ -167,6 +100,9 @@ export function EmployeeImportPage() {
         {!parseResult && (
           <motion.div key="dropzone" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <Card>
+              <CardHeader>
+                <CardTitle>Upload Attendance File</CardTitle>
+              </CardHeader>
               <CardContent className="p-6">
                 <div {...getRootProps()} className={`flex flex-col items-center justify-center p-12 border-2 border-dashed rounded-lg cursor-pointer hover:border-primary transition-colors ${isDragActive ? 'border-primary bg-primary/10' : 'border-gray-300 dark:border-gray-600'}`}>
                   <input {...getInputProps()} />
@@ -199,7 +135,7 @@ export function EmployeeImportPage() {
                   <card.icon className={`h-4 w-4 text-muted-foreground ${card.color || ''}`} />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{card.value}</div>
+                  <div className={card.title === 'Period' ? 'text-sm font-semibold' : 'text-2xl font-bold'}>{card.value}</div>
                 </CardContent>
               </Card>
             ))}
@@ -208,38 +144,25 @@ export function EmployeeImportPage() {
           <Card>
             <CardHeader>
               <CardTitle>Import Preview</CardTitle>
-              <div className="flex items-center space-x-4 pt-4">
-                <Input
-                  placeholder="Search in preview..."
-                  value={filterText}
-                  onChange={(e) => setFilterText(e.target.value)}
-                  className="max-w-sm"
-                />
-                <Select value={filterDepartment} onValueChange={setFilterDepartment}>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Filter department" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Departments</SelectItem>
-                    {parseResult.stats.departments.map(dept => <SelectItem key={dept} value={dept}>{dept}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </div>
+              <p className="text-sm text-muted-foreground">Review the parsed attendance data. Rows with errors will not be imported.</p>
             </CardHeader>
             <CardContent>
               <DataTable
                 columns={columns}
-                data={filteredData}
+                data={parseResult.rows}
               />
             </CardContent>
           </Card>
 
           <div className="flex justify-end space-x-4">
-            <Button variant="secondary" onClick={handleDownloadCorrected} disabled={parseResult.rows.length === 0}>
-              <Download className="mr-2 h-4 w-4" /> Download Corrected File
-            </Button>
-            <Button onClick={handleImport} disabled={parseResult.stats.valid === 0}>
-              <Upload className="mr-2 h-4 w-4" /> Import {parseResult.stats.valid} Valid Rows
+            {parseResult.stats.unmatched > 0 && (
+              <Button variant="secondary" onClick={handleDownloadUnmatched}>
+                <Download className="mr-2 h-4 w-4" /> Download Unmatched Rows
+              </Button>
+            )}
+            <Button onClick={handleImport} disabled={isLoading || parseResult.stats.matched === 0}>
+              {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
+              Import {parseResult.stats.matched} Matched Records
             </Button>
           </div>
         </motion.div>

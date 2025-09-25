@@ -37,9 +37,7 @@ export function DayDetailModal({ isOpen, onClose, record }: DayDetailModalProps)
           <DetailRow icon={Clock} label="First In" value={record.firstIn} />
           <DetailRow icon={Clock} label="Last Out" value={record.lastOut} />
           <DetailRow icon={Hourglass} label="Total Hours" value={`${record.hours.toFixed(2)}h`} />
-          {record.status === 'Late' && (
-            <DetailRow icon={AlertCircle} label="Delay" value="Calculated delay here" />
-          )}
+          <DetailRow icon={AlertCircle} label="Delay" value={`${record.delayMin} min`} />
         </div>
       </DialogContent>
     </Dialog>

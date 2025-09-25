@@ -63,10 +63,10 @@ export function AttendanceHeatmap({ matricule }: AttendanceHeatmapProps) {
   const getDayColor = (day: Date): string => {
     const record = attendanceMap.get(format(day, 'yyyy-MM-dd'));
     if (!record) return 'bg-gray-200 dark:bg-gray-700';
-    if (record.status === 'Holiday' && record.hours > 0) return 'bg-blue-500';
-    if (record.status === 'Present' || record.status === 'Late') return 'bg-green-500';
+    if (record.isHolidayWorked) return 'bg-blue-500';
+    if (record.credit > 0) return 'bg-green-500';
     if (record.status === 'Absent') return 'bg-red-500';
-    return 'bg-gray-200 dark:bg-gray-700';
+    return 'bg-gray-200 dark:bg-gray-700'; // Weekends, non-worked holidays
   };
 
   return (
@@ -122,6 +122,7 @@ export function AttendanceHeatmap({ matricule }: AttendanceHeatmapProps) {
                       <TooltipContent>
                         <p>{format(day, 'PPP')}</p>
                         {record && <p>Status: {record.status}</p>}
+                        {record && record.hours > 0 && <p>Hours: {record.hours.toFixed(2)}</p>}
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>

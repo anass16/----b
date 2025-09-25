@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Search, Bell, User, Globe, LogOut } from 'lucide-react'
+import { Search, Bell, User, Globe } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -15,12 +15,17 @@ import { useLang } from '@/hooks/useLang'
 import { languages } from '@/lib/i18n'
 import { useAuthStore } from '@/store/auth'
 import { useNavigate } from 'react-router-dom'
+import { OfflineClockWidget } from './OfflineClockWidget'
+import { useClockStore } from '@/store/clock'
+import { Switch } from '@/components/ui/switch'
+import { Label } from '@/components/ui/label'
 
 export function Header() {
   const { currentLanguage, setLanguage, t } = useLang()
   const [searchQuery, setSearchQuery] = useState('')
-  const { user, logout } = useAuthStore()
+  const { user } = useAuthStore()
   const navigate = useNavigate()
+  const { hour12, setHour12 } = useClockStore()
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -29,11 +34,6 @@ export function Header() {
 
   const handleLanguageChange = (langCode: string) => {
     setLanguage(langCode)
-  }
-
-  const handleLogout = () => {
-    logout()
-    navigate('/login')
   }
 
   return (
@@ -52,6 +52,9 @@ export function Header() {
       </div>
 
       <div className="flex items-center space-x-4">
+        {/* Clock Widget */}
+        <OfflineClockWidget />
+
         {/* Language Toggle */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -111,9 +114,15 @@ export function Header() {
               Profile
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout}>
-              <LogOut className="mr-2 h-4 w-4" />
-              Logout
+            <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="focus:bg-transparent cursor-default">
+              <div className="flex items-center justify-between w-full">
+                <Label htmlFor="hour-format-toggle" className="pr-2 font-normal cursor-pointer">{t('common.hourFormat24')}</Label>
+                <Switch
+                  id="hour-format-toggle"
+                  checked={!hour12}
+                  onCheckedChange={(checked) => setHour12(!checked)}
+                />
+              </div>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -41,4 +41,9 @@ export const columns: ColumnDef<AttendanceRecord>[] = [
     header: 'Work Hours',
     cell: ({ row }) => `${row.original.hours.toFixed(2)}h`,
   },
+  {
+    accessorKey: 'delayMin',
+    header: 'Delay (min)',
+    cell: ({ row }) => row.original.delayMin,
+  },
 ];

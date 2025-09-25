@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { User } from '@/lib/data'
+import { User, initialMockEmployees } from '@/lib/data'
 import { localDB } from '@/lib/local-db'
 
 type Role = 'ADMIN' | 'MANAGER' | 'EMPLOYEE'
@@ -13,12 +13,15 @@ interface AuthState {
   logout: () => void
 }
 
+// Use the first employee as the default authenticated user to bypass login.
+const defaultUser = initialMockEmployees.length > 0 ? initialMockEmployees[0] : null;
+
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
-      isAuthenticated: false,
-      user: null,
-      role: null,
+      isAuthenticated: !!defaultUser,
+      user: defaultUser,
+      role: defaultUser ? defaultUser.role : null,
       login: async (matricule: string) => {
         const user = await localDB.auth.findUser(matricule);
         if (user) {

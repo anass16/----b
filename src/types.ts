@@ -33,14 +33,55 @@ export interface ParseResult {
 export type AttendanceStatus = 'Present' | 'Absent' | 'Late' | 'Holiday';
 
 export interface AttendanceRecord {
-  id: string;
+  id: string; // combination of matricule and date
   matricule: string;
-  name: string;
-  date: string;
-  status: AttendanceStatus;
+  name: string; // denormalized for convenience
+  department: string; // denormalized
+  date: string; // YYYY-MM-DD
   firstIn: string | null;
   lastOut: string | null;
-  hours: number;
+  hours: number; // total worked hours
+  delayMin: number;
+  status: AttendanceStatus;
+  credit: 0 | 0.5 | 1;
+  isHolidayWorked: boolean;
+}
+
+// For the attendance parser output
+export interface ParsedAttendanceRow {
+  __row: number;
+  __errors: string[];
+  matricule?: string;
+  name?: string;
+  department?: string;
+  date?: string; // YYYY-MM-DD
+  in?: string; // HH:mm
+  out?: string; // HH:mm
+  hours?: number;
+  delayMin?: number;
+  status?: 'Present' | 'Absent';
+  // SAHAR Format fields
+  timestamp?: any;
+  es?: string;
+  es_calc?: string;
+  note?: string;
+  operation?: string;
+  punchTime?: string; // HH:mm derived from timestamp
+  punchType?: string; // normalized 'es' value
+}
+
+export interface AttendanceParseResult {
+  rows: ParsedAttendanceRow[];
+  processedRecords: AttendanceRecord[];
+  errors: string[];
+  unmatchedRows: ParsedAttendanceRow[];
+  stats: {
+    total: number;
+    matched: number;
+    unmatched: number;
+    period: { start: string, end: string };
+    warnings: string[];
+  };
 }
 
 export interface LeaveRequest {
