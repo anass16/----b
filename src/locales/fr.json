@@ -59,7 +59,10 @@
     "exportSuccess": "Données exportées avec succès",
     "saveSuccess": "Modifications enregistrées avec succès",
     "deleteLeaveTitle": "Supprimer la demande de congé",
-    "deleteLeaveDescription": "Cette action est irréversible. Cela supprimera définitivement la demande de congé."
+    "deleteLeaveDescription": "Cette action est irréversible. Cela supprimera définitiveiellement la demande de congé.",
+    "exportingData": "Exportation des données...",
+    "noDataToExport": "Aucune donnée à exporter.",
+    "exportFailed": "Échec de l'exportation des données."
   },
   "imports": {
     "uploadFile": "Télécharger un fichier",

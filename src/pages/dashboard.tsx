@@ -1,4 +1,6 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import toast from 'react-hot-toast'
 import { FileText, Download, Users, Clock, TrendingUp, AlertCircle, Loader2 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -7,9 +9,13 @@ import { motion } from 'framer-motion'
 import ReactECharts from 'echarts-for-react'
 import { useQuery } from '@tanstack/react-query'
 import { analyticsApi } from '@/lib/api'
+import { localDB } from '@/lib/local-db'
+import { exportToXLSX } from '@/lib/export'
 
 export function Dashboard() {
   const { t } = useLang()
+  const navigate = useNavigate()
+  const [isExporting, setIsExporting] = useState(false)
 
   const { data: summary, isLoading: isSummaryLoading } = useQuery({
     queryKey: ['analyticsSummary'],
@@ -22,6 +28,46 @@ export function Dashboard() {
     queryFn: analyticsApi.getAnalyticsData,
     staleTime: 0, // Always refetch for latest data
   })
+
+  const handleViewReports = () => {
+    navigate('/analytics')
+  }
+
+  const handleExport = async () => {
+    setIsExporting(true)
+    const toastId = toast.loading(t('alerts.exportingData'))
+    try {
+      const attendanceData = await localDB.attendance.getAll()
+      if (attendanceData.length === 0) {
+        toast.dismiss(toastId)
+        toast.error(t('alerts.noDataToExport'))
+        return
+      }
+
+      const formattedData = attendanceData.map(record => ({
+        [t('employee.matricule')]: record.matricule,
+        [t('employee.name')]: record.name,
+        [t('attendance.date')]: record.date,
+        [t('attendance.status')]: record.status,
+        [t('attendance.firstIn')]: record.firstIn || 'N/A',
+        [t('attendance.lastOut')]: record.lastOut || 'N/A',
+        [t('attendance.hours')]: record.hours,
+        [t('attendance.delay')]: record.delayMin,
+        [t('common.reason')]: record.reason || 'N/A',
+      }))
+
+      const today = new Date().toISOString().split('T')[0]
+      exportToXLSX(formattedData, `rapport_presence_${today}`, 'Présence')
+      toast.dismiss(toastId)
+      toast.success(t('alerts.exportSuccess'))
+    } catch (error) {
+      toast.dismiss(toastId)
+      toast.error(t('alerts.exportFailed'))
+      console.error(error)
+    } finally {
+      setIsExporting(false)
+    }
+  }
 
   const processedDeptData = useMemo(() => {
     if (!analyticsData?.departmentDistribution) {
@@ -119,8 +165,15 @@ export function Dashboard() {
           <p className="text-gray-600 dark:text-gray-400 mt-1">Welcome back! Here's your attendance overview.</p>
         </div>
         <div className="flex space-x-3">
-          <Button><FileText className="h-4 w-4 mr-2" />{t('buttons.viewReports')}</Button>
-          <Button variant="outline"><Download className="h-4 w-4 mr-2" />{t('buttons.export')}</Button>
+          <Button onClick={handleViewReports}><FileText className="h-4 w-4 mr-2" />{t('buttons.viewReports')}</Button>
+          <Button variant="outline" onClick={handleExport} disabled={isExporting}>
+            {isExporting ? (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : (
+              <Download className="h-4 w-4 mr-2" />
+            )}
+            {t('buttons.export')}
+          </Button>
         </div>
       </div>
 

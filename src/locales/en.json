@@ -59,7 +59,10 @@
     "exportSuccess": "Data exported successfully",
     "saveSuccess": "Changes saved successfully",
     "deleteLeaveTitle": "Delete Leave Request",
-    "deleteLeaveDescription": "This action cannot be undone. This will permanently delete the leave request."
+    "deleteLeaveDescription": "This action cannot be undone. This will permanently delete the leave request.",
+    "exportingData": "Exporting data...",
+    "noDataToExport": "No data to export.",
+    "exportFailed": "Failed to export data."
   },
   "imports": {
     "uploadFile": "Upload File",
