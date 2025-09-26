@@ -34,7 +34,10 @@
     "prevMonth": "Previous Month",
     "nextMonth": "Next Month",
     "addAbsence": "Add Absence",
-    "bulkRange": "Bulk Range"
+    "bulkRange": "Bulk Range",
+    "submitRequest": "Submit Request",
+    "submitting": "Submitting...",
+    "applyForLeave": "Apply for Leave"
   },
   "kpi": {
     "daysWorked": "Days Worked",
@@ -54,7 +57,9 @@
     "deleteHistoryConfirm": "Are you sure you want to delete this import history?",
     "uploadSuccess": "File uploaded successfully",
     "exportSuccess": "Data exported successfully",
-    "saveSuccess": "Changes saved successfully"
+    "saveSuccess": "Changes saved successfully",
+    "deleteLeaveTitle": "Delete Leave Request",
+    "deleteLeaveDescription": "This action cannot be undone. This will permanently delete the leave request."
   },
   "imports": {
     "uploadFile": "Upload File",
@@ -114,6 +119,24 @@
     "actions": "Actions",
     "online": "Online",
     "offline": "Offline",
-    "hourFormat24": "24-Hour Format"
+    "hourFormat24": "24-Hour Format",
+    "reason": "Reason",
+    "addCustomReason": "Add Custom Reason",
+    "selectOrAddReason": "Select or add a reason",
+    "addReason": "Add Reason",
+    "egFamilyEmergency": "e.g., Family Emergency",
+    "predefinedReasons": "Predefined Reasons",
+    "customReasons": "Custom Reasons",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "customReasonSuffix": "(N.B.)",
+    "notes": "Notes (N.B)",
+    "notesPlaceholder": "Add any additional notes here...",
+    "employee": "Employee",
+    "selectEmployee": "Select an employee...",
+    "editLeave": "Edit Leave Request",
+    "applyLeave": "Apply for Leave",
+    "filterByNameOrMatricule": "Filter by name or matricule...",
+    "noEmployeesFound": "No employees found."
   }
 }

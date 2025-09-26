@@ -127,6 +127,28 @@ export const localDB = {
         writeDatabase(db);
         return newLeave;
     },
+    async update(id: string, data: Partial<Omit<LeaveRequest, 'id'>>): Promise<LeaveRequest | undefined> {
+        await delay(200);
+        const db = readDatabase();
+        let updatedRequest: LeaveRequest | undefined;
+        db.leaveRequests = db.leaveRequests.map(l => {
+            if (l.id === id) {
+                updatedRequest = { ...l, ...data };
+                return updatedRequest;
+            }
+            return l;
+        });
+        writeDatabase(db);
+        return updatedRequest;
+    },
+    async delete(id: string): Promise<{ success: boolean }> {
+      await delay(200);
+      const db = readDatabase();
+      const initialLength = db.leaveRequests.length;
+      db.leaveRequests = db.leaveRequests.filter(l => l.id !== id);
+      writeDatabase(db);
+      return { success: db.leaveRequests.length < initialLength };
+    },
     async updateStatus(id: string, status: LeaveRequest['status']): Promise<LeaveRequest | undefined> {
         await delay(200);
         const db = readDatabase();
@@ -158,7 +180,21 @@ export const localDB = {
       const db = readDatabase();
       db.attendance = [];
       writeDatabase(db);
-    }
+    },
+    async updateRecord(id: string, data: Partial<AttendanceRecord>): Promise<AttendanceRecord | undefined> {
+        await delay(100);
+        const db = readDatabase();
+        let updatedRecord: AttendanceRecord | undefined;
+        db.attendance = db.attendance.map(r => {
+            if (r.id === id) {
+                updatedRecord = { ...r, ...data };
+                return updatedRecord;
+            }
+            return r;
+        });
+        writeDatabase(db);
+        return updatedRecord;
+    },
   },
   auth: {
     async findUser(matricule: string): Promise<User | undefined> {

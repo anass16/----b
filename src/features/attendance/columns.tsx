@@ -2,6 +2,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { AttendanceRecord, AttendanceStatus } from '@/types';
 import { Badge } from '@/components/ui/badge';
 import { formatDelay, formatWorkHours } from '@/lib/utils';
+import { ReasonSelector } from './ReasonSelector';
 
 const StatusBadge = ({ status }: { status: AttendanceStatus }) => {
   const variant = {
@@ -46,5 +47,10 @@ export const columns: ColumnDef<AttendanceRecord>[] = [
     accessorKey: 'delayMin',
     header: 'Delay (min)',
     cell: ({ row }) => formatDelay(row.original.delayMin),
+  },
+  {
+    accessorKey: 'reason',
+    header: 'Reason',
+    cell: ({ row }) => <ReasonSelector record={row.original} />,
   },
 ];

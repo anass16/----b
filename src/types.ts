@@ -45,6 +45,7 @@ export interface AttendanceRecord {
   status: AttendanceStatus;
   credit: 0 | 0.5 | 1;
   isHolidayWorked: boolean;
+  reason?: string;
 }
 
 // For the attendance parser output
@@ -88,8 +89,9 @@ export interface LeaveRequest {
   id: string;
   matricule: string;
   name: string;
-  startDate: string;
-  endDate: string;
+  startDate: string; // YYYY-MM-DD
+  endDate: string; // YYYY-MM-DD
   reason: string;
+  notes?: string;
   status: 'PENDING' | 'APPROVED' | 'REJECTED';
 }

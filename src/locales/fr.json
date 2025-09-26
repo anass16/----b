@@ -34,7 +34,10 @@
     "prevMonth": "Mois précédent",
     "nextMonth": "Mois suivant",
     "addAbsence": "Ajouter une absence",
-    "bulkRange": "Plage en bloc"
+    "bulkRange": "Plage en bloc",
+    "submitRequest": "Soumettre la demande",
+    "submitting": "Soumission...",
+    "applyForLeave": "Demander un congé"
   },
   "kpi": {
     "daysWorked": "Jours travaillés",
@@ -54,7 +57,9 @@
     "deleteHistoryConfirm": "Êtes-vous sûr de vouloir supprimer cet historique d'import ?",
     "uploadSuccess": "Fichier téléchargé avec succès",
     "exportSuccess": "Données exportées avec succès",
-    "saveSuccess": "Modifications enregistrées avec succès"
+    "saveSuccess": "Modifications enregistrées avec succès",
+    "deleteLeaveTitle": "Supprimer la demande de congé",
+    "deleteLeaveDescription": "Cette action est irréversible. Cela supprimera définitivement la demande de congé."
   },
   "imports": {
     "uploadFile": "Télécharger un fichier",
@@ -114,6 +119,24 @@
     "actions": "Actions",
     "online": "En ligne",
     "offline": "Hors ligne",
-    "hourFormat24": "Format 24 heures"
+    "hourFormat24": "Format 24 heures",
+    "reason": "Motif",
+    "addCustomReason": "Ajouter un motif personnalisé",
+    "selectOrAddReason": "Sélectionner ou ajouter un motif",
+    "addReason": "Ajouter le motif",
+    "egFamilyEmergency": "ex: Urgence familiale",
+    "predefinedReasons": "Motifs prédéfinis",
+    "customReasons": "Motifs personnalisés",
+    "startDate": "Date de début",
+    "endDate": "Date de fin",
+    "customReasonSuffix": "(N.B.)",
+    "notes": "Notes (N.B)",
+    "notesPlaceholder": "Ajoutez des notes supplémentaires ici...",
+    "employee": "Employé",
+    "selectEmployee": "Sélectionner un employé...",
+    "editLeave": "Modifier la demande de congé",
+    "applyLeave": "Demander un congé",
+    "filterByNameOrMatricule": "Filtrer par nom ou matricule...",
+    "noEmployeesFound": "Aucun employé trouvé."
   }
 }

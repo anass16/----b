@@ -1,5 +1,5 @@
 import { localDB } from './local-db';
-import { User } from './data';
+import { User, AttendanceRecord, LeaveRequest } from './data';
 import { startOfWeek, endOfWeek, eachDayOfInterval, format, startOfMonth, endOfMonth } from 'date-fns';
 
 // Mock holidays for demonstration
@@ -21,6 +21,8 @@ export const employeeApi = {
 export const leaveApi = {
   getAll: () => localDB.leave.findMany(),
   create: (data: any) => localDB.leave.create(data),
+  update: (id: string, data: Partial<Omit<LeaveRequest, 'id'>>) => localDB.leave.update(id, data),
+  delete: (id: string) => localDB.leave.delete(id),
   updateStatus: (id: string, status: any) => localDB.leave.updateStatus(id, status),
 }
 
@@ -37,7 +39,8 @@ export const attendanceApi = {
         return allAttendance.filter(rec => 
             rec.matricule === matricule && rec.date.startsWith(`${yearStr}-${monthStr}`)
         );
-    }
+    },
+    updateRecord: (id: string, data: Partial<AttendanceRecord>) => localDB.attendance.updateRecord(id, data),
 }
 
 export const analyticsApi = {
