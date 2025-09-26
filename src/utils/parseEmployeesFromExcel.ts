@@ -2,7 +2,7 @@ import * as XLSX from 'xlsx';
 import { Employee, EmployeeStatus, ParsedEmployeeRow, ParseResult } from '@/types';
 import { localDB } from '@/lib/local-db';
 
-const HEADER_MAP: Record<string, keyof Employee | 'fullName'> = {
+const HEADER_MAP: Record<string, keyof Employee | 'fullName' | 'summary'> = {
   'matricule': 'matricule', 'matricule.': 'matricule', 'id': 'matricule', 'code': 'matricule',
   'firstname': 'firstName', 'first name': 'firstName', 'prénom': 'firstName', 'prenom': 'firstName',
   'lastname': 'lastName', 'last name': 'lastName', 'nom de famille': 'lastName',
@@ -12,6 +12,7 @@ const HEADER_MAP: Record<string, keyof Employee | 'fullName'> = {
   'phone': 'phone', 'mobile': 'phone', 'telephone': 'phone',
   'hiredate': 'hireDate', 'hire date': 'hireDate', "date d'embauche": 'hireDate', 'date embauche': 'hireDate',
   'status': 'status', 'statut': 'status',
+  'summary': 'summary',
 };
 
 const REQUIRED_FIELDS: (keyof Employee)[] = ['matricule', 'firstName', 'lastName'];
@@ -59,7 +60,8 @@ export async function parseEmployeesFromFile(file: File): Promise<ParseResult> {
   const fileMatricules = new Set<string>();
   const duplicateMatriculesInFile = new Set<string>();
   const departments = new Set<string>();
-  const existingMatricules = localDB.employees.getMatriculesSet();
+  const existingEmployeesMap = localDB.employees.getMatriculesMap();
+  const existingMatricules = new Set(existingEmployeesMap.keys());
 
   for (let i = 1; i < data.length; i++) {
     const rowData = data[i];
@@ -79,11 +81,13 @@ export async function parseEmployeesFromFile(file: File): Promise<ParseResult> {
     });
 
     // --- Validation ---
-    REQUIRED_FIELDS.forEach(field => {
-      if (!employee[field] || String(employee[field]).trim() === '') {
-        employee.__errors.push(`Missing required field: ${field}`);
-      }
-    });
+    if (!employee.firstName && !employee.lastName) {
+        employee.__errors.push(`Missing required field: name (or firstName/lastName)`);
+    }
+
+    if (!employee.matricule || String(employee.matricule).trim() === '') {
+        employee.__errors.push(`Missing required field: matricule`);
+    }
 
     if (employee.matricule) {
       const matriculeStr = String(employee.matricule).trim();
@@ -93,8 +97,9 @@ export async function parseEmployeesFromFile(file: File): Promise<ParseResult> {
       } else {
         fileMatricules.add(matriculeStr);
       }
+      // This check is for information, but doesn't invalidate the row for updates
       if (existingMatricules.has(matriculeStr)) {
-        employee.__errors.push(`Duplicate matricule in store: ${matriculeStr}`);
+        // employee.__errors.push(`Matricule already exists in database (will be updated): ${matriculeStr}`);
       }
     }
 
@@ -143,8 +148,8 @@ export async function parseEmployeesFromFile(file: File): Promise<ParseResult> {
 }
 
 export function rebuildCorrectedWorkbook(rows: ParsedEmployeeRow[]): void {
-  const headers: (keyof Employee)[] = ['matricule', 'firstName', 'lastName', 'department', 'email', 'phone', 'hireDate', 'status'];
-  const data = rows.map(row => headers.map(header => row[header] || ''));
+  const headers: (keyof Employee | 'summary')[] = ['matricule', 'firstName', 'lastName', 'department', 'email', 'phone', 'hireDate', 'status', 'summary'];
+  const data = rows.map(row => headers.map(header => row[header as keyof ParsedEmployeeRow] || ''));
   
   const worksheet = XLSX.utils.aoa_to_sheet([headers, ...data]);
   const workbook = XLSX.utils.book_new();

@@ -10,10 +10,12 @@ import ReactECharts from 'echarts-for-react'
 import { useQuery } from '@tanstack/react-query'
 import { analyticsApi } from '@/lib/api'
 import { localDB } from '@/lib/local-db'
-import { exportToXLSX } from '@/lib/export'
+import { exportToCSV } from '@/lib/export'
+import { AttendanceRecord } from '@/types'
+import { formatWorkHours, formatDelay } from '@/lib/utils'
 
 export function Dashboard() {
-  const { t } = useLang()
+  const { t, currentLanguage } = useLang()
   const navigate = useNavigate()
   const [isExporting, setIsExporting] = useState(false)
 
@@ -34,40 +36,103 @@ export function Dashboard() {
   }
 
   const handleExport = async () => {
-    setIsExporting(true)
-    const toastId = toast.loading(t('alerts.exportingData'))
+    setIsExporting(true);
+    const toastId = toast.loading(t('alerts.exportingData'));
     try {
-      const attendanceData = await localDB.attendance.getAll()
-      if (attendanceData.length === 0) {
-        toast.dismiss(toastId)
-        toast.error(t('alerts.noDataToExport'))
-        return
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = now.getMonth();
+      const monthStr = String(month + 1).padStart(2, '0');
+      const monthName = now.toLocaleString(currentLanguage, { month: 'long' });
+
+      const allEmployees = await localDB.employees.findMany();
+      const allAttendance = await localDB.attendance.getAll();
+
+      if (allAttendance.length === 0) {
+        toast.dismiss(toastId);
+        toast.error(t('alerts.noDataToExport'));
+        setIsExporting(false);
+        return;
       }
 
-      const formattedData = attendanceData.map(record => ({
-        [t('employee.matricule')]: record.matricule,
-        [t('employee.name')]: record.name,
-        [t('attendance.date')]: record.date,
-        [t('attendance.status')]: record.status,
-        [t('attendance.firstIn')]: record.firstIn || 'N/A',
-        [t('attendance.lastOut')]: record.lastOut || 'N/A',
-        [t('attendance.hours')]: record.hours,
-        [t('attendance.delay')]: record.delayMin,
-        [t('common.reason')]: record.reason || 'N/A',
-      }))
+      const monthlyAttendance = allAttendance.filter(rec => rec.date.startsWith(`${year}-${monthStr}`));
+      const attendanceByEmployee = new Map<string, AttendanceRecord[]>();
+      monthlyAttendance.forEach(rec => {
+        if (!attendanceByEmployee.has(rec.matricule)) {
+          attendanceByEmployee.set(rec.matricule, []);
+        }
+        attendanceByEmployee.get(rec.matricule)!.push(rec);
+      });
 
-      const today = new Date().toISOString().split('T')[0]
-      exportToXLSX(formattedData, `rapport_presence_${today}`, 'Présence')
-      toast.dismiss(toastId)
-      toast.success(t('alerts.exportSuccess'))
+      const headerKeys = {
+        matricule: t('employee.matricule'),
+        employeeName: t('employee.name'),
+        department: t('employee.department'),
+        status: t('employee.status'),
+        firstIn: t('attendance.firstIn'),
+        lastOut: t('attendance.lastOut'),
+        workHours: t('attendance.hours'),
+        delay: t('attendance.delay'),
+        daysWorked: t('kpi.daysWorked'),
+        daysAbsent: t('kpi.daysAbsent'),
+        totalHours: t('kpi.totalHours'),
+        avgDelay: t('kpi.avgDelay'),
+        lateDays: t('kpi.lateDays'),
+        minorDelays: t('kpi.minorDelays'),
+        holidaysWorked: t('kpi.holidaysWorked'),
+      };
+
+      const exportData = allEmployees.map(employee => {
+        const records = attendanceByEmployee.get(employee.matricule) || [];
+
+        const daysWorked = records.filter(r => r.credit > 0).length;
+        const daysAbsent = records.filter(r => r.status === 'Absent').length;
+        const totalHours = records.reduce((sum, r) => sum + r.hours, 0);
+        const lateRecords = records.filter(r => r.delayMin > 0);
+        const avgDelay = lateRecords.length > 0 ? lateRecords.reduce((sum, r) => sum + r.delayMin, 0) / lateRecords.length : 0;
+        const lateDays = records.filter(r => r.status === 'Late').length;
+        const minorDelays = records.filter(r => r.delayMin > 0 && r.delayMin <= 10).length;
+        const holidaysWorked = records.filter(r => r.isHolidayWorked).length;
+
+        const lastRecord = [...records].sort((a, b) => b.date.localeCompare(a.date))[0];
+
+        return {
+          [headerKeys.matricule]: employee.matricule,
+          [headerKeys.employeeName]: employee.name,
+          [headerKeys.department]: employee.department || 'N/A',
+          [headerKeys.status]: employee.status || 'N/A',
+          [headerKeys.firstIn]: lastRecord?.firstIn || 'N/A',
+          [headerKeys.lastOut]: lastRecord?.lastOut || 'N/A',
+          [headerKeys.workHours]: formatWorkHours(lastRecord?.hours || 0),
+          [headerKeys.delay]: formatDelay(lastRecord?.delayMin || 0),
+          [headerKeys.daysWorked]: daysWorked,
+          [headerKeys.daysAbsent]: daysAbsent,
+          [headerKeys.totalHours]: totalHours.toFixed(2),
+          [headerKeys.avgDelay]: avgDelay.toFixed(2),
+          [headerKeys.lateDays]: lateDays,
+          [headerKeys.minorDelays]: minorDelays,
+          [headerKeys.holidaysWorked]: holidaysWorked,
+        };
+      });
+
+      const orderedHeaders = [
+        headerKeys.matricule, headerKeys.employeeName, headerKeys.department, headerKeys.status,
+        headerKeys.firstIn, headerKeys.lastOut, headerKeys.workHours, headerKeys.delay,
+        headerKeys.daysWorked, headerKeys.daysAbsent, headerKeys.totalHours, headerKeys.avgDelay,
+        headerKeys.lateDays, headerKeys.minorDelays, headerKeys.holidaysWorked
+      ];
+
+      exportToCSV(exportData, orderedHeaders, `attendance_${monthName}_${year}.csv`);
+      toast.dismiss(toastId);
+      toast.success(t('alerts.exportSuccess'));
     } catch (error) {
-      toast.dismiss(toastId)
-      toast.error(t('alerts.exportFailed'))
-      console.error(error)
+      toast.dismiss(toastId);
+      toast.error(t('alerts.exportFailed'));
+      console.error(error);
     } finally {
-      setIsExporting(false)
+      setIsExporting(false);
     }
-  }
+  };
 
   const processedDeptData = useMemo(() => {
     if (!analyticsData?.departmentDistribution) {

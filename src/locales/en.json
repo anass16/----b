@@ -37,7 +37,10 @@
     "bulkRange": "Bulk Range",
     "submitRequest": "Submit Request",
     "submitting": "Submitting...",
-    "applyForLeave": "Apply for Leave"
+    "applyForLeave": "Apply for Leave",
+    "startOver": "Start Over",
+    "importRecords": "Import {count} Records",
+    "downloadCorrected": "Download Corrected File"
   },
   "kpi": {
     "daysWorked": "Days Worked",
@@ -62,10 +65,22 @@
     "deleteLeaveDescription": "This action cannot be undone. This will permanently delete the leave request.",
     "exportingData": "Exporting data...",
     "noDataToExport": "No data to export.",
-    "exportFailed": "Failed to export data."
+    "exportFailed": "Failed to export data.",
+    "unrecognizedFormat": "Unrecognized file format. Please check file headers.",
+    "fileEmpty": "File is empty or has no data rows.",
+    "parseFailed": "Failed to parse the file. It might be corrupted or in an unsupported format.",
+    "parsedSuccess": "Parsed {count} rows.",
+    "attendanceParsedSuccess": "Parsed {count} attendance records.",
+    "employeeParsedSuccess": "Parsed {count} employee records.",
+    "noValidRecords": "No valid records to import."
   },
   "imports": {
+    "title": "Data Import",
     "uploadFile": "Upload File",
+    "uploadSubtitle": "Upload an Employee file or an Attendance file",
+    "dropzone": "Drag & drop your file here, or click to browse",
+    "dropzoneSubtext": "Supports .xlsx, .xls, .csv",
+    "processing": "Processing file...",
     "viewReport": "View Report",
     "deleteHistory": "Delete History",
     "downloadUnmatched": "Download Unmatched",
@@ -75,7 +90,13 @@
     "period": "Period",
     "softDelete": "Soft Delete",
     "hardDelete": "Hard Delete",
-    "rollback": "Rollback"
+    "rollback": "Rollback",
+    "totalRows": "Total Rows",
+    "validRows": "Valid Rows",
+    "invalidRows": "Invalid Rows",
+    "departmentsFound": "Departments Found",
+    "previewTitle": "Import Preview",
+    "previewSubtitle": "Review the parsed data. Rows with errors (red icon) will not be imported."
   },
   "abs": {
     "reason": {

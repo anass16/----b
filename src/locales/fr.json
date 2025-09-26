@@ -37,7 +37,10 @@
     "bulkRange": "Plage en bloc",
     "submitRequest": "Soumettre la demande",
     "submitting": "Soumission...",
-    "applyForLeave": "Demander un congé"
+    "applyForLeave": "Demander un congé",
+    "startOver": "Recommencer",
+    "importRecords": "Importer {count} lignes",
+    "downloadCorrected": "Télécharger le fichier corrigé"
   },
   "kpi": {
     "daysWorked": "Jours travaillés",
@@ -59,13 +62,25 @@
     "exportSuccess": "Données exportées avec succès",
     "saveSuccess": "Modifications enregistrées avec succès",
     "deleteLeaveTitle": "Supprimer la demande de congé",
-    "deleteLeaveDescription": "Cette action est irréversible. Cela supprimera définitiveiellement la demande de congé.",
+    "deleteLeaveDescription": "Cette action est irréversible. Cela supprimera définitivemment la demande de congé.",
     "exportingData": "Exportation des données...",
     "noDataToExport": "Aucune donnée à exporter.",
-    "exportFailed": "Échec de l'exportation des données."
+    "exportFailed": "Échec de l'exportation des données.",
+    "unrecognizedFormat": "Format de fichier non reconnu. Veuillez vérifier les en-têtes.",
+    "fileEmpty": "Le fichier est vide ou ne contient aucune ligne de données.",
+    "parseFailed": "Échec de l'analyse du fichier. Il est peut-être corrompu ou dans un format non pris en charge.",
+    "parsedSuccess": "{count} lignes analysées.",
+    "attendanceParsedSuccess": "{count} registres de présence analysés.",
+    "employeeParsedSuccess": "{count} registres d'employés analysés.",
+    "noValidRecords": "Aucun enregistrement valide à importer."
   },
   "imports": {
-    "uploadFile": "Télécharger un fichier",
+    "title": "Import de Données",
+    "uploadFile": "Télécharger un Fichier",
+    "uploadSubtitle": "Téléchargez un fichier d'Employés ou de Présence",
+    "dropzone": "Glissez-déposez votre fichier ici, ou cliquez pour parcourir",
+    "dropzoneSubtext": "Supporte .xlsx, .xls, .csv",
+    "processing": "Traitement du fichier...",
     "viewReport": "Voir le rapport",
     "deleteHistory": "Supprimer l'historique",
     "downloadUnmatched": "Télécharger non appariés",
@@ -75,7 +90,13 @@
     "period": "Période",
     "softDelete": "Suppression douce",
     "hardDelete": "Suppression définitive",
-    "rollback": "Annulation"
+    "rollback": "Annulation",
+    "totalRows": "Lignes totales",
+    "validRows": "Lignes valides",
+    "invalidRows": "Lignes invalides",
+    "departmentsFound": "Départements trouvés",
+    "previewTitle": "Aperçu de l'import",
+    "previewSubtitle": "Examinez les données analysées. Les lignes avec des erreurs (icône rouge) ne seront pas importées."
   },
   "abs": {
     "reason": {

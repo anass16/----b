@@ -41,11 +41,11 @@ export function formatDuration(minutes: number): string {
 
 export function formatWorkHours(decimalHours: number): string {
   if (decimalHours === null || decimalHours === undefined || isNaN(decimalHours) || decimalHours < 0) {
-    return '0h00min';
+    return '0h00';
   }
   const hours = Math.floor(decimalHours);
   const minutes = Math.round((decimalHours - hours) * 60);
-  return `${hours}h${String(minutes).padStart(2, '0')}min`;
+  return `${hours}h${String(minutes).padStart(2, '0')}`;
 }
 
 export function formatDelay(minutes: number): string {

@@ -11,7 +11,7 @@ import { SettingsPage } from '@/pages/settings'
 import { LoginPage } from '@/features/auth/LoginPage'
 import { useAuthStore } from '@/store/auth'
 import { useTheme } from '@/hooks/use-theme'
-import { AttendanceImportPage } from '@/pages/imports'
+import { DataImportPage } from '@/pages/imports'
 import { AnalyticsPage } from '@/pages/analytics'
 import { AttendancePage } from '@/pages/attendance'
 import { EmployeeProfilePage } from '@/pages/employee-profile'
@@ -57,7 +57,7 @@ function MainApp() {
             <Route path="/attendance" element={<AttendancePage />} />
             <Route path="/leave" element={<LeavePage />} />
             <Route path="/analytics" element={<AnalyticsPage />} />
-            <Route path="/imports" element={<AttendanceImportPage />} />
+            <Route path="/imports" element={<DataImportPage />} />
             <Route path="/settings" element={<SettingsPage />} />
           </Routes>
         </main>

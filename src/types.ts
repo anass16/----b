@@ -16,6 +16,7 @@ export interface Employee {
 export interface ParsedEmployeeRow extends Partial<Employee> {
   __row: number;
   __errors: string[];
+  summary?: string;
 }
 
 export interface ParseResult {
@@ -94,4 +95,11 @@ export interface LeaveRequest {
   reason: string;
   notes?: string;
   status: 'PENDING' | 'APPROVED' | 'REJECTED';
+}
+
+export interface User extends Employee {
+  name: string;
+  role: 'ADMIN' | 'MANAGER' | 'EMPLOYEE';
+  worksSaturday: boolean;
+  createdAt: string;
 }
