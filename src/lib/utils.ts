@@ -28,3 +28,24 @@ export function formatDuration(minutes: number): string {
   const mins = minutes % 60
   return `${hours}h ${mins}m`
 }
+
+export function formatWorkHours(decimalHours: number): string {
+  if (decimalHours === null || decimalHours === undefined || isNaN(decimalHours) || decimalHours < 0) {
+    return '0h00min';
+  }
+  const hours = Math.floor(decimalHours);
+  const minutes = Math.round((decimalHours - hours) * 60);
+  return `${hours}h${String(minutes).padStart(2, '0')}min`;
+}
+
+export function formatDelay(minutes: number): string {
+  if (minutes === null || minutes === undefined || isNaN(minutes) || minutes <= 0) {
+    return '0min';
+  }
+  if (minutes < 60) {
+    return `${minutes}min`;
+  }
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+  return `${hours}h${String(remainingMinutes).padStart(2, '0')}min`;
+}

@@ -1,6 +1,7 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { AttendanceRecord, AttendanceStatus } from '@/types';
 import { Badge } from '@/components/ui/badge';
+import { formatDelay, formatWorkHours } from '@/lib/utils';
 
 const StatusBadge = ({ status }: { status: AttendanceStatus }) => {
   const variant = {
@@ -39,11 +40,11 @@ export const columns: ColumnDef<AttendanceRecord>[] = [
   {
     accessorKey: 'hours',
     header: 'Work Hours',
-    cell: ({ row }) => `${row.original.hours.toFixed(2)}h`,
+    cell: ({ row }) => formatWorkHours(row.original.hours),
   },
   {
     accessorKey: 'delayMin',
     header: 'Delay (min)',
-    cell: ({ row }) => row.original.delayMin,
+    cell: ({ row }) => formatDelay(row.original.delayMin),
   },
 ];
