@@ -15,7 +15,7 @@ import { DataImportPage } from '@/pages/imports'
 import { AnalyticsPage } from '@/pages/analytics'
 import { AttendancePage } from '@/pages/attendance'
 import { EmployeeProfilePage } from '@/pages/employee-profile'
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { MonthlyReportPage } from '@/pages/monthly-report'
 import { useNotifications } from './hooks/useNotifications'
 
 const queryClient = new QueryClient({
@@ -59,6 +59,7 @@ function MainApp() {
             <Route path="/attendance" element={<AttendancePage />} />
             <Route path="/leave" element={<LeavePage />} />
             <Route path="/analytics" element={<AnalyticsPage />} />
+            <Route path="/monthly-report" element={<MonthlyReportPage />} />
             <Route path="/imports" element={<DataImportPage />} />
             <Route path="/settings" element={<SettingsPage />} />
           </Routes>

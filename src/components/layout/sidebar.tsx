@@ -8,7 +8,8 @@ import {
   BarChart3, 
   Upload, 
   Settings,
-  Building2
+  Building2,
+  CalendarCheck
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useLang } from '@/hooks/useLang'
@@ -38,6 +39,11 @@ const navigation = [
     name: 'nav.analytics',
     href: '/analytics',
     icon: BarChart3
+  },
+  {
+    name: 'nav.monthlyReport',
+    href: '/monthly-report',
+    icon: CalendarCheck
   },
   {
     name: 'nav.imports',

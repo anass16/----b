@@ -5,6 +5,7 @@
     "attendance": "Attendance",
     "leave": "Leave",
     "analytics": "Analytics",
+    "monthlyReport": "Monthly Report",
     "imports": "Imports",
     "settings": "Settings"
   },
@@ -300,7 +301,9 @@
     "na": "N/A",
     "selectDepartment": "Select a department",
     "selectStatus": "Select a status",
-    "loadingDepartments": "Loading..."
+    "loadingDepartments": "Loading...",
+    "filter": "Filter",
+    "selectMonthAndYear": "Select a month and year to view the report."
   },
   "dataTable": {
     "loading": "Loading data...",
@@ -347,5 +350,17 @@
     "leaveSubmitted": "A leave request has been submitted by {{name}}.",
     "leaveStatusChanged": "Leave request for {{name}} has been {{status}}.",
     "reportExported": "Report '{{name}}' has been exported successfully."
+  },
+  "monthlyReport": {
+    "title": "Monthly Worked Days Report",
+    "description": "View the total number of days each employee worked for a selected month.",
+    "selectMonth": "Select Month",
+    "selectYear": "Select Year",
+    "table": {
+      "matricule": "Matricule",
+      "name": "Employee Name",
+      "department": "Department",
+      "daysWorked": "Days Worked"
+    }
   }
 }

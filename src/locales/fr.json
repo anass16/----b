@@ -5,6 +5,7 @@
     "attendance": "Présence",
     "leave": "Congés",
     "analytics": "Analyses",
+    "monthlyReport": "Rapport Mensuel",
     "imports": "Imports",
     "settings": "Paramètres"
   },
@@ -300,7 +301,9 @@
     "na": "N/A",
     "selectDepartment": "Sélectionner un département",
     "selectStatus": "Sélectionner un statut",
-    "loadingDepartments": "Chargement..."
+    "loadingDepartments": "Chargement...",
+    "filter": "Filtre",
+    "selectMonthAndYear": "Sélectionnez un mois et une année pour afficher le rapport."
   },
   "dataTable": {
     "loading": "Chargement des données...",
@@ -347,5 +350,17 @@
     "leaveSubmitted": "Une demande de congé a été soumise par {{name}}.",
     "leaveStatusChanged": "La demande de congé pour {{name}} a été {{status}}.",
     "reportExported": "Le rapport '{{name}}' a été exporté avec succès."
+  },
+  "monthlyReport": {
+    "title": "Rapport Mensuel des Jours Travaillés",
+    "description": "Affichez le nombre total de jours travaillés par chaque employé pour un mois sélectionné.",
+    "selectMonth": "Sélectionner le mois",
+    "selectYear": "Sélectionner l'année",
+    "table": {
+      "matricule": "Matricule",
+      "name": "Nom de l'employé",
+      "department": "Département",
+      "daysWorked": "Jours Travaillés"
+    }
   }
 }

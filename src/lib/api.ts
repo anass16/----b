@@ -211,7 +211,30 @@ export const analyticsApi = {
     });
 
     return { departmentDistribution, statusDistribution, weeklyAttendanceTrend };
-  }
+  },
+  getMonthlyWorkedDaysReport: async (year: number, month: number) => {
+    const allEmployees = await localDB.employees.findMany();
+    const allAttendance = await localDB.attendance.getAll();
+    
+    const monthStr = String(month + 1).padStart(2, '0');
+    const yearStr = String(year);
+
+    const monthlyAttendance = allAttendance.filter(rec => rec.date.startsWith(`${yearStr}-${monthStr}`));
+    
+    const reportData = allEmployees.map(employee => {
+        const employeeRecords = monthlyAttendance.filter(rec => rec.matricule === employee.matricule);
+        const daysWorked = employeeRecords.filter(rec => rec.credit > 0).length;
+        
+        return {
+            matricule: employee.matricule,
+            name: employee.name,
+            department: employee.department || 'N/A',
+            daysWorked: daysWorked,
+        };
+    });
+    
+    return reportData;
+  },
 }
 
 export const notificationApi = {
