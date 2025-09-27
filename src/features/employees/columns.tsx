@@ -7,7 +7,7 @@ import { MoreHorizontal, Edit, Trash2, Eye } from 'lucide-react'
 
 interface ColumnsProps {
   onEdit: (employee: User) => void;
-  onDelete: (matricule: string) => void;
+  onDelete: (employee: User) => void;
   onViewProfile: (matricule: string) => void;
 }
 
@@ -56,7 +56,7 @@ export const columns = ({ onEdit, onDelete, onViewProfile }: ColumnsProps): Colu
             <DropdownMenuItem onClick={() => onEdit(employee)}>
               <Edit className="mr-2 h-4 w-4" /> Edit
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onDelete(employee.matricule)} className="text-red-600">
+            <DropdownMenuItem onClick={() => onDelete(employee)} className="text-red-600">
               <Trash2 className="mr-2 h-4 w-4" /> Delete
             </DropdownMenuItem>
           </DropdownMenuContent>

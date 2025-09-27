@@ -16,6 +16,7 @@ export const employeeApi = {
   create: (data: Omit<User, 'createdAt' | 'matricule' | 'id' | 'firstName' | 'lastName' | 'worksSaturday'>) => localDB.employees.create(data),
   update: (matricule: string, data: Partial<User>) => localDB.employees.update(matricule, data),
   delete: (matricule: string) => localDB.employees.delete(matricule),
+  deleteAll: () => localDB.employees.deleteAll(),
 }
 
 export const leaveApi = {

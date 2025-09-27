@@ -12,7 +12,7 @@ import { analyticsApi } from '@/lib/api'
 import { localDB } from '@/lib/local-db'
 import { exportToCSV } from '@/lib/export'
 import { AttendanceRecord } from '@/types'
-import { formatWorkHours, formatDelay } from '@/lib/utils'
+import { formatWorkHours, formatDelay, formatDecimalHoursToHM } from '@/lib/utils'
 
 export function Dashboard() {
   const { t, currentLanguage } = useLang()
@@ -107,8 +107,8 @@ export function Dashboard() {
           [headerKeys.delay]: formatDelay(lastRecord?.delayMin || 0),
           [headerKeys.daysWorked]: daysWorked,
           [headerKeys.daysAbsent]: daysAbsent,
-          [headerKeys.totalHours]: totalHours.toFixed(2),
-          [headerKeys.avgDelay]: avgDelay.toFixed(2),
+          [headerKeys.totalHours]: formatDecimalHoursToHM(totalHours),
+          [headerKeys.avgDelay]: formatDelay(avgDelay),
           [headerKeys.lateDays]: lateDays,
           [headerKeys.minorDelays]: minorDelays,
           [headerKeys.holidaysWorked]: holidaysWorked,

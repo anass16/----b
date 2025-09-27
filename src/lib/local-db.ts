@@ -102,6 +102,17 @@ export const localDB = {
       writeDatabase(db);
       return { success: true };
     },
+    async deleteAll(): Promise<{ success: boolean }> {
+      await delay(300);
+      const db = readDatabase();
+      const initialLength = db.employees.length;
+      // Keep admin users to prevent lockout
+      db.employees = db.employees.filter(e => e.role === 'ADMIN');
+      // Also clear attendance as it's linked to employees
+      db.attendance = [];
+      writeDatabase(db);
+      return { success: db.employees.length < initialLength };
+    },
     overwriteAll(newEmployees: User[]): void {
       const db = readDatabase();
       db.employees = newEmployees;

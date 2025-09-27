@@ -40,7 +40,8 @@
     "applyForLeave": "Apply for Leave",
     "startOver": "Start Over",
     "importRecords": "Import {count} Records",
-    "downloadCorrected": "Download Corrected File"
+    "downloadCorrected": "Download Corrected File",
+    "deleteAll": "Delete All"
   },
   "kpi": {
     "daysWorked": "Days Worked",
@@ -72,7 +73,13 @@
     "parsedSuccess": "Parsed {count} rows.",
     "attendanceParsedSuccess": "Parsed {count} attendance records.",
     "employeeParsedSuccess": "Parsed {count} employee records.",
-    "noValidRecords": "No valid records to import."
+    "noValidRecords": "No valid records to import.",
+    "deleteEmployeeTitle": "Delete Employee",
+    "deleteEmployeeDescription": "Are you sure you want to delete this employee? This action cannot be undone.",
+    "deleteAllEmployeesTitle": "Delete All Employees",
+    "deleteAllEmployeesDescription": "Are you sure you want to delete all non-admin employees? This will also clear all attendance data. This action cannot be undone.",
+    "deleteSuccess": "Employee(s) deleted successfully.",
+    "deleteError": "Failed to delete employee(s)."
   },
   "imports": {
     "title": "Data Import",
@@ -116,7 +123,8 @@
     "role": "Role",
     "status": "Status",
     "worksSaturday": "Works Saturday",
-    "createdAt": "Created At"
+    "createdAt": "Created At",
+    "editProfile": "Edit Employee Profile"
   },
   "attendance": {
     "date": "Date",

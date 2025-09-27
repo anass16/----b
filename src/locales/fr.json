@@ -40,7 +40,8 @@
     "applyForLeave": "Demander un congé",
     "startOver": "Recommencer",
     "importRecords": "Importer {count} lignes",
-    "downloadCorrected": "Télécharger le fichier corrigé"
+    "downloadCorrected": "Télécharger le fichier corrigé",
+    "deleteAll": "Tout supprimer"
   },
   "kpi": {
     "daysWorked": "Jours travaillés",
@@ -72,7 +73,13 @@
     "parsedSuccess": "{count} lignes analysées.",
     "attendanceParsedSuccess": "{count} registres de présence analysés.",
     "employeeParsedSuccess": "{count} registres d'employés analysés.",
-    "noValidRecords": "Aucun enregistrement valide à importer."
+    "noValidRecords": "Aucun enregistrement valide à importer.",
+    "deleteEmployeeTitle": "Supprimer l'employé",
+    "deleteEmployeeDescription": "Êtes-vous sûr de vouloir supprimer cet employé ? Cette action est irréversible.",
+    "deleteAllEmployeesTitle": "Supprimer tous les employés",
+    "deleteAllEmployeesDescription": "Êtes-vous sûr de vouloir supprimer tous les employés non-administrateurs ? Cela effacera également toutes les données de présence. Cette action est irréversible.",
+    "deleteSuccess": "Employé(s) supprimé(s) avec succès.",
+    "deleteError": "Échec de la suppression du ou des employé(s)."
   },
   "imports": {
     "title": "Import de Données",
@@ -116,7 +123,8 @@
     "role": "Rôle",
     "status": "Statut",
     "worksSaturday": "Travaille le samedi",
-    "createdAt": "Créé le"
+    "createdAt": "Créé le",
+    "editProfile": "Modifier le profil de l'employé"
   },
   "attendance": {
     "date": "Date",

@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { employeeApi } from '@/lib/api'
 import { User } from '@/lib/data'
 import { Button } from '@/components/ui/button'
@@ -13,8 +13,7 @@ import toast from 'react-hot-toast'
 
 const formSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
-  department: z.string().min(2, 'Department is required.'),
-  role: z.enum(['ADMIN', 'MANAGER', 'EMPLOYEE']),
+  department: z.string().min(1, 'Please select a department.'),
   status: z.enum(['Active', 'Inactive']),
 })
 
@@ -30,21 +29,41 @@ export function EmployeeForm({ employee, onFinished }: EmployeeFormProps) {
     defaultValues: {
       name: employee?.name || '',
       department: employee?.department || '',
-      role: employee?.role || 'EMPLOYEE',
       status: employee?.status || 'Active',
     },
   })
+
+  const { data: allEmployees, isLoading: isLoadingDepartments } = useQuery<User[]>({
+    queryKey: ['employees'],
+    queryFn: employeeApi.getAll,
+  });
+
+  const uniqueDepartments = useMemo(() => {
+    if (!allEmployees) return [];
+    const depts = new Set<string>();
+    allEmployees.forEach(emp => {
+        if (emp.department) {
+            depts.add(emp.department);
+        }
+    });
+    return Array.from(depts).sort();
+  }, [allEmployees]);
+
 
   const mutation = useMutation({
     mutationFn: (values: z.infer<typeof formSchema>) => {
       if (employee) {
         return employeeApi.update(employee.matricule, values)
       }
-      return employeeApi.create(values)
+      // When creating, add a default role since it's removed from the form
+      return employeeApi.create({ ...values, role: 'EMPLOYEE' })
     },
     onSuccess: () => {
       toast.success(`Employee ${employee ? 'updated' : 'created'} successfully!`)
       queryClient.invalidateQueries({ queryKey: ['employees'] })
+      if (employee) {
+        queryClient.invalidateQueries({ queryKey: ['employee', employee.matricule] });
+      }
       onFinished()
     },
     onError: () => {
@@ -78,29 +97,20 @@ export function EmployeeForm({ employee, onFinished }: EmployeeFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Department</FormLabel>
-              <FormControl>
-                <Input placeholder="IT" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="role"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Role</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a role" />
+                  <SelectTrigger disabled={isLoadingDepartments}>
+                    <SelectValue placeholder="Select a department" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="EMPLOYEE">Employee</SelectItem>
-                  <SelectItem value="MANAGER">Manager</SelectItem>
-                  <SelectItem value="ADMIN">Admin</SelectItem>
+                  {isLoadingDepartments ? (
+                    <SelectItem value="loading" disabled>Loading...</SelectItem>
+                  ) : (
+                    uniqueDepartments.map(dept => (
+                      <SelectItem key={dept} value={dept}>{dept}</SelectItem>
+                    ))
+                  )}
                 </SelectContent>
               </Select>
               <FormMessage />

@@ -52,10 +52,20 @@ export function formatDelay(minutes: number): string {
   if (minutes === null || minutes === undefined || isNaN(minutes) || minutes <= 0) {
     return '0min';
   }
-  if (minutes < 60) {
-    return `${minutes}min`;
+  const roundedMinutes = Math.round(minutes);
+  if (roundedMinutes < 60) {
+    return `${roundedMinutes}min`;
   }
-  const hours = Math.floor(minutes / 60);
-  const remainingMinutes = minutes % 60;
+  const hours = Math.floor(roundedMinutes / 60);
+  const remainingMinutes = roundedMinutes % 60;
   return `${hours}h${String(remainingMinutes).padStart(2, '0')}min`;
+}
+
+export function formatDecimalHoursToHM(decimalHours: number): string {
+  if (decimalHours === null || decimalHours === undefined || isNaN(decimalHours) || decimalHours < 0) {
+    return '0h00min';
+  }
+  const hours = Math.floor(decimalHours);
+  const minutes = Math.round((decimalHours - hours) * 60);
+  return `${hours}h${String(minutes).padStart(2, '0')}min`;
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { employeeApi } from '@/lib/api';
@@ -9,6 +9,9 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, Edit, Mail, Phone, Briefcase } from 'lucide-react';
 import { AttendanceHeatmap } from '@/features/employees/AttendanceHeatmap';
 import { Loader2 } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { EmployeeForm } from '@/features/employees/employee-form';
+import { useLang } from '@/hooks/useLang';
 
 const ProfileDetail = ({ icon: Icon, label, value }: { icon: React.ElementType, label: string, value?: string }) => (
   <div className="flex items-center text-sm">
@@ -20,6 +23,8 @@ const ProfileDetail = ({ icon: Icon, label, value }: { icon: React.ElementType, 
 
 export function EmployeeProfilePage() {
   const { matricule } = useParams<{ matricule: string }>();
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const { t } = useLang();
 
   const { data: employee, isLoading } = useQuery({
     queryKey: ['employee', matricule],
@@ -52,7 +57,17 @@ export function EmployeeProfilePage() {
         <Link to="/employees">
           <Button variant="outline"><ArrowLeft className="h-4 w-4 mr-2" /> Back to Employees</Button>
         </Link>
-        <Button><Edit className="h-4 w-4 mr-2" /> Edit Profile</Button>
+        <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+          <DialogTrigger asChild>
+            <Button><Edit className="h-4 w-4 mr-2" /> {t('buttons.edit')} Profile</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{t('employee.editProfile')}</DialogTitle>
+            </DialogHeader>
+            <EmployeeForm employee={employee} onFinished={() => setIsFormOpen(false)} />
+          </DialogContent>
+        </Dialog>
       </div>
 
       <Card>
