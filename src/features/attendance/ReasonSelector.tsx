@@ -35,11 +35,11 @@ export function ReasonSelector({ record }: ReasonSelectorProps) {
   const updateReasonMutation = useMutation({
     mutationFn: (reason: string) => attendanceApi.updateRecord(record.id, { reason }),
     onSuccess: () => {
-      toast.success('Reason updated.');
+      toast.success(t('alerts.reasonUpdateSuccess'));
       queryClient.invalidateQueries({ queryKey: ['attendance', record.date] });
     },
     onError: () => {
-      toast.error('Failed to update reason.');
+      toast.error(t('alerts.reasonUpdateFailed'));
     }
   });
 

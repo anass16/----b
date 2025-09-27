@@ -10,12 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import toast from 'react-hot-toast'
-
-const formSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters.'),
-  department: z.string().min(1, 'Please select a department.'),
-  status: z.enum(['Active', 'Inactive']),
-})
+import { useLang } from '@/hooks/useLang'
 
 interface EmployeeFormProps {
   employee: User | null
@@ -24,6 +19,14 @@ interface EmployeeFormProps {
 
 export function EmployeeForm({ employee, onFinished }: EmployeeFormProps) {
   const queryClient = useQueryClient()
+  const { t } = useLang();
+
+  const formSchema = z.object({
+    name: z.string().min(2, t('validation.nameMin')),
+    department: z.string().min(1, t('validation.departmentRequired')),
+    status: z.enum(['Active', 'Inactive']),
+  })
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -55,11 +58,10 @@ export function EmployeeForm({ employee, onFinished }: EmployeeFormProps) {
       if (employee) {
         return employeeApi.update(employee.matricule, values)
       }
-      // When creating, add a default role since it's removed from the form
       return employeeApi.create({ ...values, role: 'EMPLOYEE' })
     },
     onSuccess: () => {
-      toast.success(`Employee ${employee ? 'updated' : 'created'} successfully!`)
+      toast.success(t(employee ? 'alerts.employeeUpdateSuccess' : 'alerts.employeeCreateSuccess'))
       queryClient.invalidateQueries({ queryKey: ['employees'] })
       if (employee) {
         queryClient.invalidateQueries({ queryKey: ['employee', employee.matricule] });
@@ -67,7 +69,7 @@ export function EmployeeForm({ employee, onFinished }: EmployeeFormProps) {
       onFinished()
     },
     onError: () => {
-      toast.error('An error occurred.')
+      toast.error(t('alerts.error'))
     },
   })
 
@@ -83,9 +85,9 @@ export function EmployeeForm({ employee, onFinished }: EmployeeFormProps) {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>{t('employee.name')}</FormLabel>
               <FormControl>
-                <Input placeholder="John Doe" {...field} />
+                <Input {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -96,16 +98,16 @@ export function EmployeeForm({ employee, onFinished }: EmployeeFormProps) {
           name="department"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Department</FormLabel>
+              <FormLabel>{t('employee.department')}</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger disabled={isLoadingDepartments}>
-                    <SelectValue placeholder="Select a department" />
+                    <SelectValue placeholder={t('common.selectDepartment')} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
                   {isLoadingDepartments ? (
-                    <SelectItem value="loading" disabled>Loading...</SelectItem>
+                    <SelectItem value="loading" disabled>{t('common.loadingDepartments')}</SelectItem>
                   ) : (
                     uniqueDepartments.map(dept => (
                       <SelectItem key={dept} value={dept}>{dept}</SelectItem>
@@ -122,11 +124,11 @@ export function EmployeeForm({ employee, onFinished }: EmployeeFormProps) {
           name="status"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Status</FormLabel>
+              <FormLabel>{t('employee.status')}</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a status" />
+                    <SelectValue placeholder={t('common.selectStatus')} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -139,9 +141,9 @@ export function EmployeeForm({ employee, onFinished }: EmployeeFormProps) {
           )}
         />
         <div className="flex justify-end space-x-2 pt-4">
-            <Button type="button" variant="outline" onClick={onFinished}>Cancel</Button>
+            <Button type="button" variant="outline" onClick={onFinished}>{t('buttons.cancel')}</Button>
             <Button type="submit" disabled={mutation.isPending}>
-              {mutation.isPending ? 'Saving...' : 'Save'}
+              {mutation.isPending ? t('buttons.saving') : t('buttons.save')}
             </Button>
         </div>
       </form>

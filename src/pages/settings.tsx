@@ -11,16 +11,18 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Switch } from '@/components/ui/switch'
 import toast from 'react-hot-toast'
 import { Label } from '@/components/ui/label'
-
-const profileSchema = z.object({
-  name: z.string().min(2, 'Name is required'),
-  matricule: z.string(),
-  department: z.string(),
-})
+import { useLang } from '@/hooks/useLang'
 
 export function SettingsPage() {
   const { user } = useAuthStore()
   const { theme, setTheme } = useTheme()
+  const { t } = useLang()
+
+  const profileSchema = z.object({
+    name: z.string().min(2, t('validation.nameMin')),
+    matricule: z.string(),
+    department: z.string(),
+  })
 
   const form = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
@@ -33,41 +35,41 @@ export function SettingsPage() {
 
   function onProfileSubmit(values: z.infer<typeof profileSchema>) {
     console.log(values)
-    toast.success('Profile updated (demo)!')
+    toast.success(t('alerts.profileUpdateSuccess'))
   }
 
   return (
     <div className="space-y-8">
-      <h1 className="text-3xl font-bold">Settings</h1>
+      <h1 className="text-3xl font-bold">{t('settings.title')}</h1>
       
       <Card>
         <CardHeader>
-          <CardTitle>Profile</CardTitle>
-          <CardDescription>Manage your personal information.</CardDescription>
+          <CardTitle>{t('settings.profileTitle')}</CardTitle>
+          <CardDescription>{t('settings.profileDescription')}</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onProfileSubmit)} className="space-y-4 max-w-md">
               <FormField control={form.control} name="name" render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>{t('employee.name')}</FormLabel>
                   <FormControl><Input {...field} /></FormControl>
                   <FormMessage />
                 </FormItem>
               )} />
               <FormField control={form.control} name="matricule" render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Matricule</FormLabel>
+                  <FormLabel>{t('employee.matricule')}</FormLabel>
                   <FormControl><Input {...field} disabled /></FormControl>
                 </FormItem>
               )} />
               <FormField control={form.control} name="department" render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Department</FormLabel>
+                  <FormLabel>{t('employee.department')}</FormLabel>
                   <FormControl><Input {...field} disabled /></FormControl>
                 </FormItem>
               )} />
-              <Button type="submit">Save Changes</Button>
+              <Button type="submit">{t('buttons.saveChanges')}</Button>
             </form>
           </Form>
         </CardContent>
@@ -75,8 +77,8 @@ export function SettingsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Appearance</CardTitle>
-          <CardDescription>Customize the look and feel of the application.</CardDescription>
+          <CardTitle>{t('settings.appearanceTitle')}</CardTitle>
+          <CardDescription>{t('settings.appearanceDescription')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center space-x-2">
@@ -85,7 +87,7 @@ export function SettingsPage() {
               checked={theme === 'dark'}
               onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
             />
-            <Label htmlFor="dark-mode">Dark Mode</Label>
+            <Label htmlFor="dark-mode">{t('settings.darkMode')}</Label>
           </div>
         </CardContent>
       </Card>

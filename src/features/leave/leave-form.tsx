@@ -15,21 +15,6 @@ import { useLang } from '@/hooks/useLang'
 import { LeaveRequest } from '@/types'
 import { EmployeeSelector } from '@/components/shared/EmployeeSelector'
 
-const formSchema = z.object({
-  id: z.string().optional(),
-  matricule: z.string().min(1, 'Employee is required.'),
-  name: z.string(),
-  startDate: z.string().refine((val) => val && !isNaN(Date.parse(val)), { message: "Invalid date" }),
-  endDate: z.string().refine((val) => val && !isNaN(Date.parse(val)), { message: "Invalid date" }),
-  reason: z.string().min(1, 'Reason is required.'),
-  notes: z.string().optional(),
-}).refine(data => new Date(data.endDate) >= new Date(data.startDate), {
-  message: "End date cannot be before start date",
-  path: ["endDate"],
-});
-
-type LeaveFormValues = z.infer<typeof formSchema>;
-
 interface LeaveFormProps {
   leaveRequestToEdit?: LeaveRequest | null;
   onFinished: () => void;
@@ -39,6 +24,21 @@ export function LeaveForm({ leaveRequestToEdit, onFinished }: LeaveFormProps) {
   const queryClient = useQueryClient()
   const { user, role } = useAuthStore()
   const { t } = useLang()
+
+  const formSchema = z.object({
+    id: z.string().optional(),
+    matricule: z.string().min(1, t('validation.employeeRequired')),
+    name: z.string(),
+    startDate: z.string().refine((val) => val && !isNaN(Date.parse(val)), { message: t('validation.invalidDate') }),
+    endDate: z.string().refine((val) => val && !isNaN(Date.parse(val)), { message: t('validation.invalidDate') }),
+    reason: z.string().min(1, t('validation.reasonRequired')),
+    notes: z.string().optional(),
+  }).refine(data => new Date(data.endDate) >= new Date(data.startDate), {
+    message: t('validation.endDateAfterStart'),
+    path: ["endDate"],
+  });
+  
+  type LeaveFormValues = z.infer<typeof formSchema>;
   
   const form = useForm<LeaveFormValues>({
     resolver: zodResolver(formSchema),
@@ -64,12 +64,12 @@ export function LeaveForm({ leaveRequestToEdit, onFinished }: LeaveFormProps) {
       return leaveApi.create(data);
     },
     onSuccess: () => {
-      toast.success(`Leave request ${leaveRequestToEdit ? 'updated' : 'submitted'}!`);
+      toast.success(t(leaveRequestToEdit ? 'alerts.saveSuccess' : 'alerts.submitRequestSuccess'));
       queryClient.invalidateQueries({ queryKey: ['leaveRequests'] });
       onFinished();
     },
     onError: (error) => {
-      toast.error(error.message || 'An error occurred.');
+      toast.error(error.message || t('alerts.error'));
     },
   })
 

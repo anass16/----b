@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { DataTable } from '@/components/ui/data-table';
 import { columns } from '@/features/attendance/columns';
-import { AttendanceRecord } from '@/types';
+import { useLang } from '@/hooks/useLang';
 
 const getTodayString = () => {
     const today = new Date();
@@ -16,6 +16,7 @@ const getTodayString = () => {
 
 export function AttendancePage() {
   const [selectedDate, setSelectedDate] = useState(getTodayString());
+  const { t } = useLang();
 
   const { data: attendanceData, isLoading } = useQuery({
     queryKey: ['attendance', selectedDate],
@@ -24,7 +25,7 @@ export function AttendancePage() {
 
   const stats = useMemo(() => {
     if (!attendanceData) {
-      return { present: 0, absent: 0, late: 0, onLeave: 0 };
+      return { present: 0, absent: 0, late: 0 };
     }
     return attendanceData.reduce(
       (acc, record) => {
@@ -38,16 +39,16 @@ export function AttendancePage() {
   }, [attendanceData]);
 
   const kpiCards = [
-    { title: 'Present', value: stats.present, icon: UserCheck, color: 'text-green-500' },
-    { title: 'Absent', value: stats.absent, icon: UserX, color: 'text-red-500' },
-    { title: 'Late', value: stats.late, icon: AlertTriangle, color: 'text-yellow-500' },
-    { title: 'Total', value: attendanceData?.length || 0, icon: Clock, color: 'text-blue-500' },
+    { title: t('attendance.present'), value: stats.present, icon: UserCheck, color: 'text-green-500' },
+    { title: t('attendance.absent'), value: stats.absent, icon: UserX, color: 'text-red-500' },
+    { title: t('attendance.late'), value: stats.late, icon: AlertTriangle, color: 'text-yellow-500' },
+    { title: t('attendance.total'), value: attendanceData?.length || 0, icon: Clock, color: 'text-blue-500' },
   ];
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Daily Attendance</h1>
+        <h1 className="text-3xl font-bold">{t('attendance.title')}</h1>
         <div className="w-48">
           <Input
             type="date"
@@ -78,7 +79,7 @@ export function AttendancePage() {
         data={attendanceData || []}
         isLoading={isLoading}
         filterColumnId="name"
-        filterPlaceholder="Filter by employee name..."
+        filterPlaceholder={t('attendance.filterPlaceholder')}
       />
     </div>
   );

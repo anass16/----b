@@ -2,7 +2,9 @@ import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { AttendanceRecord } from '@/types';
 import { format } from 'date-fns';
+import { fr, enUS } from 'date-fns/locale';
 import { Clock, Briefcase, Hourglass, AlertCircle } from 'lucide-react';
+import { useLang } from '@/hooks/useLang';
 
 interface DayDetailModalProps {
   isOpen: boolean;
@@ -21,23 +23,26 @@ const DetailRow = ({ icon: Icon, label, value }: { icon: React.ElementType, labe
 );
 
 export function DayDetailModal({ isOpen, onClose, record }: DayDetailModalProps) {
+  const { t, currentLanguage } = useLang();
+  const locale = currentLanguage === 'fr' ? fr : enUS;
+
   if (!record) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Attendance Details</DialogTitle>
+          <DialogTitle>{t('dayDetail.title')}</DialogTitle>
           <DialogDescription>
-            {record.name} - {format(new Date(record.date), 'EEEE, MMMM d, yyyy')}
+            {record.name} - {format(new Date(record.date), 'EEEE, MMMM d, yyyy', { locale })}
           </DialogDescription>
         </DialogHeader>
         <div className="mt-4 space-y-2">
-          <DetailRow icon={Briefcase} label="Status" value={record.status} />
-          <DetailRow icon={Clock} label="First In" value={record.firstIn} />
-          <DetailRow icon={Clock} label="Last Out" value={record.lastOut} />
-          <DetailRow icon={Hourglass} label="Total Hours" value={`${record.hours.toFixed(2)}h`} />
-          <DetailRow icon={AlertCircle} label="Delay" value={`${record.delayMin} min`} />
+          <DetailRow icon={Briefcase} label={t('dayDetail.status')} value={record.status} />
+          <DetailRow icon={Clock} label={t('dayDetail.firstIn')} value={record.firstIn} />
+          <DetailRow icon={Clock} label={t('dayDetail.lastOut')} value={record.lastOut} />
+          <DetailRow icon={Hourglass} label={t('dayDetail.totalHours')} value={`${record.hours.toFixed(2)}h`} />
+          <DetailRow icon={AlertCircle} label={t('dayDetail.delay')} value={`${record.delayMin} min`} />
         </div>
       </DialogContent>
     </Dialog>

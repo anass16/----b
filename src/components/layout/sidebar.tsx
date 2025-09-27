@@ -56,11 +56,11 @@ export function Sidebar() {
   const { t } = useLang()
 
   return (
-    <div className="flex h-full w-64 flex-col bg-white border-r border-gray-200">
+    <div className="flex h-full w-64 flex-col bg-white border-r border-gray-200 dark:bg-gray-800">
       <div className="flex h-16 items-center px-6 border-b border-gray-200">
         <div className="flex items-center space-x-2">
           <Building2 className="h-8 w-8 text-blue-600" />
-          <span className="text-xl font-bold text-gray-900">HR Attendance</span>
+          <span className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('sidebar.title')}</span>
         </div>
       </div>
       
@@ -75,8 +75,8 @@ export function Sidebar() {
                   className={cn(
                     'flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors',
                     isActive
-                      ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                      ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700 dark:bg-blue-900/50 dark:text-blue-300'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-100'
                   )}
                 >
                   <item.icon className="mr-3 h-5 w-5" />

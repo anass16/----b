@@ -3,10 +3,9 @@ import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { employeeApi } from '@/lib/api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Edit, Mail, Phone, Briefcase } from 'lucide-react';
+import { ArrowLeft, Edit, Briefcase } from 'lucide-react';
 import { AttendanceHeatmap } from '@/features/employees/AttendanceHeatmap';
 import { Loader2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -43,9 +42,9 @@ export function EmployeeProfilePage() {
   if (!employee) {
     return (
       <div className="text-center">
-        <h2 className="text-2xl font-bold">Employee not found</h2>
+        <h2 className="text-2xl font-bold">{t('employee.notFound')}</h2>
         <Link to="/employees">
-          <Button className="mt-4">Back to Employees</Button>
+          <Button className="mt-4">{t('buttons.backToEmployees')}</Button>
         </Link>
       </div>
     );
@@ -55,11 +54,11 @@ export function EmployeeProfilePage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <Link to="/employees">
-          <Button variant="outline"><ArrowLeft className="h-4 w-4 mr-2" /> Back to Employees</Button>
+          <Button variant="outline"><ArrowLeft className="h-4 w-4 mr-2" /> {t('buttons.backToEmployees')}</Button>
         </Link>
         <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
           <DialogTrigger asChild>
-            <Button><Edit className="h-4 w-4 mr-2" /> {t('buttons.edit')} Profile</Button>
+            <Button><Edit className="h-4 w-4 mr-2" /> {t('buttons.editProfile')}</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
@@ -72,24 +71,14 @@ export function EmployeeProfilePage() {
 
       <Card>
         <CardHeader>
-          <div className="flex items-center space-x-4">
-            <Avatar className="h-20 w-20">
-              <AvatarImage src={`https://i.pravatar.cc/150?u=${employee.matricule}`} />
-              <AvatarFallback>{employee.firstName?.[0]}{employee.lastName?.[0]}</AvatarFallback>
-            </Avatar>
-            <div>
-              <CardTitle className="text-2xl">{employee.name}</CardTitle>
-              <p className="text-gray-500">{employee.role}</p>
-              <Badge className="mt-2" variant={employee.status === 'Active' ? 'success' : 'destructive'}>
-                {employee.status}
-              </Badge>
-            </div>
-          </div>
+          <CardTitle className="text-2xl">{employee.name}</CardTitle>
+          <p className="text-gray-500">{employee.role}</p>
+          <Badge className="mt-2" variant={employee.status === 'Active' ? 'success' : 'destructive'}>
+            {employee.status}
+          </Badge>
         </CardHeader>
-        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
-          <ProfileDetail icon={Briefcase} label="Department" value={employee.department} />
-          <ProfileDetail icon={Mail} label="Email" value={employee.email} />
-          <ProfileDetail icon={Phone} label="Phone" value={employee.phone} />
+        <CardContent className="pt-4">
+          <ProfileDetail icon={Briefcase} label={t('employee.department')} value={employee.department} />
         </CardContent>
       </Card>
 

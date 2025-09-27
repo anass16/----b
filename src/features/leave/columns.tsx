@@ -34,10 +34,10 @@ const ActionButtons = ({ request, onEdit, onDelete }: { request: LeaveRequest } 
     const mutation = useMutation({
         mutationFn: ({ id, status }: { id: string, status: LeaveRequest['status'] }) => leaveApi.updateStatus(id, status),
         onSuccess: () => {
-            toast.success('Leave status updated!')
+            toast.success(t('alerts.leaveStatusUpdateSuccess'))
             queryClient.invalidateQueries({ queryKey: ['leaveRequests'] })
         },
-        onError: () => toast.error('Failed to update status.')
+        onError: () => toast.error(t('alerts.leaveStatusUpdateFailed'))
     })
 
     const canApprove = user?.role === 'MANAGER' || user?.role === 'ADMIN';
@@ -47,15 +47,15 @@ const ActionButtons = ({ request, onEdit, onDelete }: { request: LeaveRequest } 
         <div className="flex items-center space-x-2">
             {canApprove && request.status === 'PENDING' && (
                 <>
-                    <Button size="sm" variant="outline" className="text-green-600 border-green-600 hover:bg-green-50" onClick={() => mutation.mutate({ id: request.id, status: 'APPROVED' })}>Approve</Button>
-                    <Button size="sm" variant="outline" className="text-red-600 border-red-600 hover:bg-red-50" onClick={() => mutation.mutate({ id: request.id, status: 'REJECTED' })}>Reject</Button>
+                    <Button size="sm" variant="outline" className="text-green-600 border-green-600 hover:bg-green-50" onClick={() => mutation.mutate({ id: request.id, status: 'APPROVED' })}>{t('buttons.approve')}</Button>
+                    <Button size="sm" variant="outline" className="text-red-600 border-red-600 hover:bg-red-50" onClick={() => mutation.mutate({ id: request.id, status: 'REJECTED' })}>{t('buttons.reject')}</Button>
                 </>
             )}
             {canEditDelete && (
                  <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
+                            <span className="sr-only">{t('employees.actions.menu')}</span>
                             <MoreHorizontal className="h-4 w-4" />
                         </Button>
                     </DropdownMenuTrigger>
@@ -73,47 +73,50 @@ const ActionButtons = ({ request, onEdit, onDelete }: { request: LeaveRequest } 
     )
 }
 
-export const columns = ({ onEdit, onDelete }: ColumnsProps): ColumnDef<LeaveRequest>[] => [
-  { accessorKey: 'name', header: 'Employee' },
-  { 
-    accessorKey: 'startDate', 
-    header: 'Start Date',
-    cell: ({ row }) => formatDateToDDMMYYYY(row.original.startDate)
-  },
-  { 
-    accessorKey: 'endDate', 
-    header: 'End Date',
-    cell: ({ row }) => formatDateToDDMMYYYY(row.original.endDate)
-  },
-  { accessorKey: 'reason', header: 'Reason' },
-  {
-    accessorKey: 'notes',
-    header: 'Notes',
-    cell: ({ row }) => {
-      const notes = row.original.notes;
-      if (!notes) return <span className="text-muted-foreground">N/A</span>;
-      return (
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger>
-              <p className="truncate max-w-[150px]">{notes}</p>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p className="max-w-xs whitespace-normal">{notes}</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      );
-    }
-  },
-  {
-    accessorKey: 'status',
-    header: 'Status',
-    cell: ({ row }) => <StatusBadge status={row.original.status} />,
-  },
-  {
-    id: 'actions',
-    header: 'Actions',
-    cell: ({ row }) => <ActionButtons request={row.original} onEdit={onEdit} onDelete={onDelete} />,
-  },
-]
+export const columns = ({ onEdit, onDelete }: ColumnsProps): ColumnDef<LeaveRequest>[] => {
+  const { t } = useLang();
+  return [
+    { accessorKey: 'name', header: t('leave.table.employee') },
+    { 
+      accessorKey: 'startDate', 
+      header: t('leave.table.startDate'),
+      cell: ({ row }) => formatDateToDDMMYYYY(row.original.startDate)
+    },
+    { 
+      accessorKey: 'endDate', 
+      header: t('leave.table.endDate'),
+      cell: ({ row }) => formatDateToDDMMYYYY(row.original.endDate)
+    },
+    { accessorKey: 'reason', header: t('leave.table.reason') },
+    {
+      accessorKey: 'notes',
+      header: t('leave.table.notes'),
+      cell: ({ row }) => {
+        const notes = row.original.notes;
+        if (!notes) return <span className="text-muted-foreground">{t('common.na')}</span>;
+        return (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <p className="truncate max-w-[150px]">{notes}</p>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="max-w-xs whitespace-normal">{notes}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        );
+      }
+    },
+    {
+      accessorKey: 'status',
+      header: t('leave.table.status'),
+      cell: ({ row }) => <StatusBadge status={row.original.status} />,
+    },
+    {
+      id: 'actions',
+      header: t('leave.table.actions'),
+      cell: ({ row }) => <ActionButtons request={row.original} onEdit={onEdit} onDelete={onDelete} />,
+    },
+  ]
+}

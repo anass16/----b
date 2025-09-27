@@ -2,11 +2,12 @@ import { ColumnDef } from '@tanstack/react-table';
 import { ParsedEmployeeRow } from '@/types';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { AlertTriangle, CheckCircle } from 'lucide-react';
+import { useLang } from '@/hooks/useLang';
 
 export const employeeImportColumns: ColumnDef<ParsedEmployeeRow>[] = [
   {
     id: 'validationStatus',
-    header: 'Status',
+    header: () => useLang().t('imports.employeeTable.status'),
     cell: ({ row }) => {
       const errors = row.original.__errors;
       if (errors.length > 0) {
@@ -29,10 +30,10 @@ export const employeeImportColumns: ColumnDef<ParsedEmployeeRow>[] = [
     },
     size: 50,
   },
-  { accessorKey: 'matricule', header: 'Matricule' },
-  { accessorKey: 'firstName', header: 'First Name' },
-  { accessorKey: 'lastName', header: 'Last Name' },
-  { accessorKey: 'department', header: 'Department' },
-  { accessorKey: 'status', header: 'Status' },
-  { accessorKey: 'email', header: 'Email' },
+  { accessorKey: 'matricule', header: () => useLang().t('imports.employeeTable.matricule') },
+  { accessorKey: 'firstName', header: () => useLang().t('imports.employeeTable.firstName') },
+  { accessorKey: 'lastName', header: () => useLang().t('imports.employeeTable.lastName') },
+  { accessorKey: 'department', header: () => useLang().t('imports.employeeTable.department') },
+  { accessorKey: 'status', header: () => useLang().t('imports.employeeTable.status') },
+  { accessorKey: 'email', header: () => useLang().t('imports.employeeTable.email') },
 ];

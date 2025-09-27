@@ -8,6 +8,14 @@
     "imports": "Imports",
     "settings": "Settings"
   },
+  "header": {
+    "notifications": "Notifications",
+    "myAccount": "My Account",
+    "profile": "Profile"
+  },
+  "sidebar": {
+    "title": "HR Attendance"
+  },
   "buttons": {
     "create": "Create",
     "edit": "Edit",
@@ -41,7 +49,14 @@
     "startOver": "Start Over",
     "importRecords": "Import {count} Records",
     "downloadCorrected": "Download Corrected File",
-    "deleteAll": "Delete All"
+    "deleteAll": "Delete All",
+    "addNewEmployee": "Add New Employee",
+    "saving": "Saving...",
+    "approve": "Approve",
+    "reject": "Reject",
+    "backToEmployees": "Back to Employees",
+    "editProfile": "Edit Profile",
+    "saveChanges": "Save Changes"
   },
   "kpi": {
     "daysWorked": "Days Worked",
@@ -79,7 +94,28 @@
     "deleteAllEmployeesTitle": "Delete All Employees",
     "deleteAllEmployeesDescription": "Are you sure you want to delete all non-admin employees? This will also clear all attendance data. This action cannot be undone.",
     "deleteSuccess": "Employee(s) deleted successfully.",
-    "deleteError": "Failed to delete employee(s)."
+    "deleteError": "Failed to delete employee(s).",
+    "reasonUpdateSuccess": "Reason updated.",
+    "reasonUpdateFailed": "Failed to update reason.",
+    "leaveStatusUpdateSuccess": "Leave status updated!",
+    "leaveStatusUpdateFailed": "Failed to update status.",
+    "leaveRequestDeleteSuccess": "Leave request deleted successfully!",
+    "leaveRequestDeleteFailed": "Failed to delete leave request.",
+    "profileUpdateSuccess": "Profile updated (demo)!",
+    "employeeCreateSuccess": "Employee created successfully!",
+    "employeeUpdateSuccess": "Employee updated successfully!"
+  },
+  "login": {
+    "title": "HR Attendance Login",
+    "description": "Enter your Matricule to access the dashboard",
+    "placeholder": "e.g., EMP001",
+    "loading": "Logging in...",
+    "button": "Login",
+    "helpText1": "The system starts empty.",
+    "helpText2": "Go to Imports to upload an employee file, then log in with a valid Matricule.",
+    "matriculeRequired": "Please enter your Matricule.",
+    "success": "Login successful!",
+    "invalid": "Invalid Matricule. Please import a file or try again."
   },
   "imports": {
     "title": "Data Import",
@@ -103,7 +139,24 @@
     "invalidRows": "Invalid Rows",
     "departmentsFound": "Departments Found",
     "previewTitle": "Import Preview",
-    "previewSubtitle": "Review the parsed data. Rows with errors (red icon) will not be imported."
+    "previewSubtitle": "Review the parsed data. Rows with errors (red icon) will not be imported.",
+    "table": {
+      "status": "Status",
+      "matricule": "Matricule",
+      "date": "Date",
+      "in": "In",
+      "out": "Out",
+      "hours": "Hours",
+      "delayMin": "Delay (min)"
+    },
+    "employeeTable": {
+      "status": "Status",
+      "matricule": "Matricule",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "department": "Department",
+      "email": "Email"
+    }
   },
   "abs": {
     "reason": {
@@ -124,9 +177,30 @@
     "status": "Status",
     "worksSaturday": "Works Saturday",
     "createdAt": "Created At",
-    "editProfile": "Edit Employee Profile"
+    "editProfile": "Edit Employee Profile",
+    "addTitle": "Add New Employee",
+    "editTitle": "Edit Employee",
+    "notFound": "Employee not found"
+  },
+  "employees": {
+    "title": "Employees",
+    "filterPlaceholder": "Filter by name...",
+    "table": {
+      "matricule": "Matricule",
+      "name": "Name",
+      "department": "Department",
+      "role": "Role",
+      "status": "Status"
+    },
+    "actions": {
+      "menu": "Open menu",
+      "view": "View Profile",
+      "edit": "Edit",
+      "delete": "Delete"
+    }
   },
   "attendance": {
+    "title": "Daily Attendance",
     "date": "Date",
     "firstIn": "First In",
     "lastOut": "Last Out",
@@ -136,7 +210,59 @@
     "onTime": "On Time",
     "late": "Late",
     "absent": "Absent",
-    "holiday": "Holiday"
+    "holiday": "Holiday",
+    "present": "Present",
+    "total": "Total",
+    "filterPlaceholder": "Filter by employee name...",
+    "table": {
+      "matricule": "Matricule",
+      "employeeName": "Employee Name",
+      "status": "Status",
+      "firstIn": "First In",
+      "lastOut": "Last Out",
+      "workHours": "Work Hours",
+      "delayMin": "Delay (min)",
+      "reason": "Reason"
+    }
+  },
+  "dashboard": {
+    "welcome": "Welcome back! Here's your attendance overview.",
+    "totalEmployees": "Total Employees",
+    "presentToday": "Present Today",
+    "lateArrivalsToday": "Late Arrivals Today",
+    "avgMonthlyHours": "Avg Monthly Hours",
+    "weeklyTrend": "Weekly Attendance Trend",
+    "byDepartment": "Employees by Department"
+  },
+  "analytics": {
+    "title": "Analytics Dashboard",
+    "byDepartment": "Employees by Department",
+    "statusDistribution": "Active vs. Inactive Status",
+    "avgHours": "Average Working Hours (Monthly)",
+    "placeholder": "Placeholder data - requires attendance records.",
+    "performance": "Performance Indicators",
+    "performancePlaceholder": "Placeholder data - requires performance metrics."
+  },
+  "leave": {
+    "title": "Leave Management",
+    "filterPlaceholder": "Filter by name...",
+    "table": {
+      "employee": "Employee",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "reason": "Reason",
+      "notes": "Notes",
+      "status": "Status",
+      "actions": "Actions"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "profileTitle": "Profile",
+    "profileDescription": "Manage your personal information.",
+    "appearanceTitle": "Appearance",
+    "appearanceDescription": "Customize the look and feel of the application.",
+    "darkMode": "Dark Mode"
   },
   "common": {
     "loading": "Loading...",
@@ -161,14 +287,55 @@
     "customReasons": "Custom Reasons",
     "startDate": "Start Date",
     "endDate": "End Date",
-    "customReasonSuffix": "(N.B.)",
-    "notes": "Notes (N.B)",
+    "customReasonSuffix": "(Custom)",
+    "notes": "Notes (Optional)",
     "notesPlaceholder": "Add any additional notes here...",
     "employee": "Employee",
     "selectEmployee": "Select an employee...",
     "editLeave": "Edit Leave Request",
     "applyLeave": "Apply for Leave",
     "filterByNameOrMatricule": "Filter by name or matricule...",
-    "noEmployeesFound": "No employees found."
+    "noEmployeesFound": "No employees found.",
+    "na": "N/A",
+    "selectDepartment": "Select a department",
+    "selectStatus": "Select a status",
+    "loadingDepartments": "Loading..."
+  },
+  "dataTable": {
+    "loading": "Loading data...",
+    "noResults": "No results.",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "heatmap": {
+    "title": "Attendance Heatmap",
+    "legend": {
+      "noData": "No Data",
+      "worked": "Worked",
+      "absent": "Absent",
+      "holidayWorked": "Holiday Worked",
+      "holiday": "Holiday"
+    },
+    "tooltip": {
+      "status": "Status",
+      "hours": "Hours",
+      "holiday": "Holiday - {{name}}"
+    }
+  },
+  "dayDetail": {
+    "title": "Attendance Details",
+    "status": "Status",
+    "firstIn": "First In",
+    "lastOut": "Last Out",
+    "totalHours": "Total Hours",
+    "delay": "Delay"
+  },
+  "validation": {
+    "nameMin": "Name must be at least 2 characters.",
+    "departmentRequired": "Please select a department.",
+    "employeeRequired": "Employee is required.",
+    "invalidDate": "Invalid date",
+    "endDateAfterStart": "End date cannot be before start date.",
+    "reasonRequired": "Reason is required."
   }
 }

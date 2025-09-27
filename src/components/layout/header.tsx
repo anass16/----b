@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Search, Bell, User, Globe } from 'lucide-react'
+import { Search, Bell, User, Globe, LogOut } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -23,7 +23,7 @@ import { Label } from '@/components/ui/label'
 export function Header() {
   const { currentLanguage, setLanguage, t } = useLang()
   const [searchQuery, setSearchQuery] = useState('')
-  const { user } = useAuthStore()
+  const { user, logout } = useAuthStore()
   const navigate = useNavigate()
   const { hour12, setHour12 } = useClockStore()
 
@@ -34,6 +34,11 @@ export function Header() {
 
   const handleLanguageChange = (langCode: string) => {
     setLanguage(langCode)
+  }
+
+  const handleLogout = () => {
+    logout()
+    navigate('/login')
   }
 
   return (
@@ -52,10 +57,8 @@ export function Header() {
       </div>
 
       <div className="flex items-center space-x-4">
-        {/* Clock Widget */}
         <OfflineClockWidget />
 
-        {/* Language Toggle */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon">
@@ -76,7 +79,6 @@ export function Header() {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {/* Notifications */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="relative">
@@ -87,7 +89,7 @@ export function Header() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-80">
-            <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+            <DropdownMenuLabel>{t('header.notifications')}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               New employee added: John Doe
@@ -98,7 +100,6 @@ export function Header() {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {/* Profile Menu */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="flex items-center space-x-2">
@@ -107,11 +108,11 @@ export function Header() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuLabel>{t('header.myAccount')}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => navigate('/settings')}>
               <User className="mr-2 h-4 w-4" />
-              Profile
+              {t('header.profile')}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="focus:bg-transparent cursor-default">
@@ -123,6 +124,11 @@ export function Header() {
                   onCheckedChange={(checked) => setHour12(!checked)}
                 />
               </div>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={handleLogout} className="text-red-500 focus:text-red-500 focus:bg-red-100/50 dark:focus:bg-red-900/50">
+                <LogOut className="mr-2 h-4 w-4" />
+                {t('login.button')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

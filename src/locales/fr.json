@@ -8,6 +8,14 @@
     "imports": "Imports",
     "settings": "Paramètres"
   },
+  "header": {
+    "notifications": "Notifications",
+    "myAccount": "Mon Compte",
+    "profile": "Profil"
+  },
+  "sidebar": {
+    "title": "Présence RH"
+  },
   "buttons": {
     "create": "Créer",
     "edit": "Modifier",
@@ -41,7 +49,14 @@
     "startOver": "Recommencer",
     "importRecords": "Importer {count} lignes",
     "downloadCorrected": "Télécharger le fichier corrigé",
-    "deleteAll": "Tout supprimer"
+    "deleteAll": "Tout supprimer",
+    "addNewEmployee": "Ajouter un employé",
+    "saving": "Enregistrement...",
+    "approve": "Approuver",
+    "reject": "Rejeter",
+    "backToEmployees": "Retour aux employés",
+    "editProfile": "Modifier le profil",
+    "saveChanges": "Enregistrer"
   },
   "kpi": {
     "daysWorked": "Jours travaillés",
@@ -79,7 +94,28 @@
     "deleteAllEmployeesTitle": "Supprimer tous les employés",
     "deleteAllEmployeesDescription": "Êtes-vous sûr de vouloir supprimer tous les employés non-administrateurs ? Cela effacera également toutes les données de présence. Cette action est irréversible.",
     "deleteSuccess": "Employé(s) supprimé(s) avec succès.",
-    "deleteError": "Échec de la suppression du ou des employé(s)."
+    "deleteError": "Échec de la suppression du ou des employé(s).",
+    "reasonUpdateSuccess": "Motif mis à jour.",
+    "reasonUpdateFailed": "Échec de la mise à jour du motif.",
+    "leaveStatusUpdateSuccess": "Statut du congé mis à jour !",
+    "leaveStatusUpdateFailed": "Échec de la mise à jour du statut.",
+    "leaveRequestDeleteSuccess": "Demande de congé supprimée avec succès !",
+    "leaveRequestDeleteFailed": "Échec de la suppression de la demande de congé.",
+    "profileUpdateSuccess": "Profil mis à jour (démo) !",
+    "employeeCreateSuccess": "Employé créé avec succès !",
+    "employeeUpdateSuccess": "Employé mis à jour avec succès !"
+  },
+  "login": {
+    "title": "Connexion Présence RH",
+    "description": "Entrez votre matricule pour accéder au tableau de bord",
+    "placeholder": "ex: EMP001",
+    "loading": "Connexion en cours...",
+    "button": "Se connecter",
+    "helpText1": "Le système démarre vide.",
+    "helpText2": "Allez dans Imports pour charger un fichier d'employés, puis connectez-vous avec un matricule valide.",
+    "matriculeRequired": "Veuillez entrer votre matricule.",
+    "success": "Connexion réussie !",
+    "invalid": "Matricule invalide. Veuillez importer un fichier ou réessayer."
   },
   "imports": {
     "title": "Import de Données",
@@ -103,7 +139,24 @@
     "invalidRows": "Lignes invalides",
     "departmentsFound": "Départements trouvés",
     "previewTitle": "Aperçu de l'import",
-    "previewSubtitle": "Examinez les données analysées. Les lignes avec des erreurs (icône rouge) ne seront pas importées."
+    "previewSubtitle": "Examinez les données analysées. Les lignes avec des erreurs (icône rouge) ne seront pas importées.",
+    "table": {
+      "status": "Statut",
+      "matricule": "Matricule",
+      "date": "Date",
+      "in": "Entrée",
+      "out": "Sortie",
+      "hours": "Heures",
+      "delayMin": "Retard (min)"
+    },
+    "employeeTable": {
+      "status": "Statut",
+      "matricule": "Matricule",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "department": "Département",
+      "email": "Email"
+    }
   },
   "abs": {
     "reason": {
@@ -124,9 +177,30 @@
     "status": "Statut",
     "worksSaturday": "Travaille le samedi",
     "createdAt": "Créé le",
-    "editProfile": "Modifier le profil de l'employé"
+    "editProfile": "Modifier le profil de l'employé",
+    "addTitle": "Ajouter un nouvel employé",
+    "editTitle": "Modifier l'employé",
+    "notFound": "Employé non trouvé"
+  },
+  "employees": {
+    "title": "Employés",
+    "filterPlaceholder": "Filtrer par nom...",
+    "table": {
+      "matricule": "Matricule",
+      "name": "Nom",
+      "department": "Département",
+      "role": "Rôle",
+      "status": "Statut"
+    },
+    "actions": {
+      "menu": "Ouvrir le menu",
+      "view": "Voir le profil",
+      "edit": "Modifier",
+      "delete": "Supprimer"
+    }
   },
   "attendance": {
+    "title": "Présence du jour",
     "date": "Date",
     "firstIn": "Première entrée",
     "lastOut": "Dernière sortie",
@@ -136,7 +210,59 @@
     "onTime": "À l'heure",
     "late": "En retard",
     "absent": "Absent",
-    "holiday": "Jour férié"
+    "holiday": "Jour férié",
+    "present": "Présent",
+    "total": "Total",
+    "filterPlaceholder": "Filtrer par nom d'employé...",
+    "table": {
+      "matricule": "Matricule",
+      "employeeName": "Nom de l'employé",
+      "status": "Statut",
+      "firstIn": "Première Entrée",
+      "lastOut": "Dernière Sortie",
+      "workHours": "Heures Travaillées",
+      "delayMin": "Retard (min)",
+      "reason": "Motif"
+    }
+  },
+  "dashboard": {
+    "welcome": "Bon retour ! Voici votre aperçu de présence.",
+    "totalEmployees": "Total Employés",
+    "presentToday": "Présents Aujourd'hui",
+    "lateArrivalsToday": "Arrivées en Retard",
+    "avgMonthlyHours": "H. Moy. Mensuelles",
+    "weeklyTrend": "Tendance de Présence Hebdomadaire",
+    "byDepartment": "Employés par Département"
+  },
+  "analytics": {
+    "title": "Tableau de Bord Analytique",
+    "byDepartment": "Employés par Département",
+    "statusDistribution": "Statut Actif vs. Inactif",
+    "avgHours": "Heures de Travail Moyennes (Mensuel)",
+    "placeholder": "Données fictives - nécessite des registres de présence.",
+    "performance": "Indicateurs de Performance",
+    "performancePlaceholder": "Données fictives - nécessite des métriques de performance."
+  },
+  "leave": {
+    "title": "Gestion des Congés",
+    "filterPlaceholder": "Filtrer par nom...",
+    "table": {
+      "employee": "Employé",
+      "startDate": "Date de début",
+      "endDate": "Date de fin",
+      "reason": "Motif",
+      "notes": "Notes",
+      "status": "Statut",
+      "actions": "Actions"
+    }
+  },
+  "settings": {
+    "title": "Paramètres",
+    "profileTitle": "Profil",
+    "profileDescription": "Gérez vos informations personnelles.",
+    "appearanceTitle": "Apparence",
+    "appearanceDescription": "Personnalisez l'apparence de l'application.",
+    "darkMode": "Mode Sombre"
   },
   "common": {
     "loading": "Chargement...",
@@ -161,14 +287,55 @@
     "customReasons": "Motifs personnalisés",
     "startDate": "Date de début",
     "endDate": "Date de fin",
-    "customReasonSuffix": "(N.B.)",
-    "notes": "Notes (N.B)",
+    "customReasonSuffix": "(Perso.)",
+    "notes": "Notes (Optionnel)",
     "notesPlaceholder": "Ajoutez des notes supplémentaires ici...",
     "employee": "Employé",
     "selectEmployee": "Sélectionner un employé...",
     "editLeave": "Modifier la demande de congé",
     "applyLeave": "Demander un congé",
     "filterByNameOrMatricule": "Filtrer par nom ou matricule...",
-    "noEmployeesFound": "Aucun employé trouvé."
+    "noEmployeesFound": "Aucun employé trouvé.",
+    "na": "N/A",
+    "selectDepartment": "Sélectionner un département",
+    "selectStatus": "Sélectionner un statut",
+    "loadingDepartments": "Chargement..."
+  },
+  "dataTable": {
+    "loading": "Chargement des données...",
+    "noResults": "Aucun résultat.",
+    "previous": "Précédent",
+    "next": "Suivant"
+  },
+  "heatmap": {
+    "title": "Carte de Présence",
+    "legend": {
+      "noData": "Pas de données",
+      "worked": "Travaillé",
+      "absent": "Absent",
+      "holidayWorked": "Férié travaillé",
+      "holiday": "Jour Férié"
+    },
+    "tooltip": {
+      "status": "Statut",
+      "hours": "Heures",
+      "holiday": "Jour Férié - {{name}}"
+    }
+  },
+  "dayDetail": {
+    "title": "Détails de la Présence",
+    "status": "Statut",
+    "firstIn": "Première Entrée",
+    "lastOut": "Dernière Sortie",
+    "totalHours": "Heures Totales",
+    "delay": "Retard"
+  },
+  "validation": {
+    "nameMin": "Le nom doit comporter au moins 2 caractères.",
+    "departmentRequired": "Veuillez sélectionner un département.",
+    "employeeRequired": "L'employé est requis.",
+    "invalidDate": "Date invalide",
+    "endDateAfterStart": "La date de fin ne peut pas être antérieure à la date de début.",
+    "reasonRequired": "Le motif est requis."
   }
 }

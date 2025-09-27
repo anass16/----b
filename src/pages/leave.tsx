@@ -4,7 +4,7 @@ import toast from 'react-hot-toast'
 import { leaveApi } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { PlusCircle } from 'lucide-react'
-import { columns } from '@/features/leave/columns'
+import { columns as getColumns } from '@/features/leave/columns'
 import { DataTable } from '@/components/ui/data-table'
 import { LeaveForm } from '@/features/leave/leave-form'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
@@ -27,13 +27,13 @@ export function LeavePage() {
   const deleteMutation = useMutation({
     mutationFn: (id: string) => leaveApi.delete(id),
     onSuccess: () => {
-      toast.success('Leave request deleted successfully!');
+      toast.success(t('alerts.leaveRequestDeleteSuccess'));
       queryClient.invalidateQueries({ queryKey: ['leaveRequests'] });
       setIsAlertOpen(false);
       setSelectedLeave(null);
     },
     onError: () => {
-      toast.error('Failed to delete leave request.');
+      toast.error(t('alerts.leaveRequestDeleteFailed'));
     }
   });
 
@@ -56,22 +56,24 @@ export function LeavePage() {
     setIsFormOpen(false);
     setSelectedLeave(null);
   }
+  
+  const columns = getColumns({ onEdit: handleEdit, onDelete: handleDelete });
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Leave Management</h1>
+        <h1 className="text-3xl font-bold">{t('leave.title')}</h1>
         <Button onClick={handleAddNew}>
           <PlusCircle className="mr-2 h-4 w-4" /> {t('buttons.applyForLeave')}
         </Button>
       </div>
 
       <DataTable
-        columns={columns({ onEdit: handleEdit, onDelete: handleDelete })}
+        columns={columns}
         data={leaveRequests || []}
         isLoading={isLoading}
         filterColumnId="name"
-        filterPlaceholder="Filter by name..."
+        filterPlaceholder={t('leave.filterPlaceholder')}
       />
 
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>

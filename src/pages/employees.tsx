@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 import { employeeApi } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { PlusCircle, Trash2 } from 'lucide-react'
-import { columns } from '@/features/employees/columns'
+import { columns as getColumns } from '@/features/employees/columns'
 import { DataTable } from '@/components/ui/data-table'
 import { EmployeeForm } from '@/features/employees/employee-form'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
@@ -96,21 +96,23 @@ export function EmployeesPage() {
         deleteMutation.mutate(employeeToDelete.matricule);
     }
   };
+  
+  const columns = getColumns({ onEdit: handleEdit, onDelete: handleDelete, onViewProfile: handleViewProfile });
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Employees</h1>
+        <h1 className="text-3xl font-bold">{t('employees.title')}</h1>
         <div className="flex items-center space-x-2">
           <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
             <DialogTrigger asChild>
               <Button onClick={handleAddNew}>
-                <PlusCircle className="mr-2 h-4 w-4" /> Add New Employee
+                <PlusCircle className="mr-2 h-4 w-4" /> {t('buttons.addNewEmployee')}
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>{selectedEmployee ? 'Edit Employee' : 'Add New Employee'}</DialogTitle>
+                <DialogTitle>{selectedEmployee ? t('employee.editTitle') : t('employee.addTitle')}</DialogTitle>
               </DialogHeader>
               <EmployeeForm employee={selectedEmployee} onFinished={() => setIsFormOpen(false)} />
             </DialogContent>
@@ -122,11 +124,11 @@ export function EmployeesPage() {
       </div>
 
       <DataTable
-        columns={columns({ onEdit: handleEdit, onDelete: handleDelete, onViewProfile: handleViewProfile })}
+        columns={columns}
         data={employees || []}
         isLoading={isLoading}
         filterColumnId="name"
-        filterPlaceholder="Filter by name..."
+        filterPlaceholder={t('employees.filterPlaceholder')}
       />
 
       <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>

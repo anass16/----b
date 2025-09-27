@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { useLang } from '@/hooks/useLang'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -36,6 +37,7 @@ export function DataTable<TData, TValue>({
   filterPlaceholder,
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
+  const { t } = useLang();
   
   const table = useReactTable({
     data,
@@ -87,7 +89,7 @@ export function DataTable<TData, TValue>({
             {isLoading ? (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                  Loading data...
+                  {t('dataTable.loading')}
                 </TableCell>
               </TableRow>
             ) : table.getRowModel().rows?.length ? (
@@ -106,7 +108,7 @@ export function DataTable<TData, TValue>({
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                  No results.
+                  {t('dataTable.noResults')}
                 </TableCell>
               </TableRow>
             )}
@@ -120,7 +122,7 @@ export function DataTable<TData, TValue>({
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
-          Previous
+          {t('dataTable.previous')}
         </Button>
         <Button
           variant="outline"
@@ -128,7 +130,7 @@ export function DataTable<TData, TValue>({
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >
-          Next
+          {t('dataTable.next')}
         </Button>
       </div>
     </div>

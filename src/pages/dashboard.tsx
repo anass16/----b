@@ -22,13 +22,13 @@ export function Dashboard() {
   const { data: summary, isLoading: isSummaryLoading } = useQuery({
     queryKey: ['analyticsSummary'],
     queryFn: analyticsApi.getSummary,
-    staleTime: 0, // Always refetch for latest data
+    staleTime: 0,
   })
 
   const { data: analyticsData, isLoading: isAnalyticsLoading } = useQuery({
     queryKey: ['analyticsData'],
     queryFn: analyticsApi.getAnalyticsData,
-    staleTime: 0, // Always refetch for latest data
+    staleTime: 0,
   })
 
   const handleViewReports = () => {
@@ -149,7 +149,6 @@ export function Dashboard() {
       displayData = [...top7, { name: 'Other', value: otherValue }];
     }
 
-    // Reverse for horizontal bar chart display (largest on top)
     displayData.reverse();
 
     return {
@@ -159,7 +158,6 @@ export function Dashboard() {
     };
   }, [analyticsData]);
 
-  // Chart options
   const attendanceChartOptions = {
     tooltip: { trigger: 'axis' },
     xAxis: { type: 'category', data: analyticsData?.weeklyAttendanceTrend.map(d => d.day) || [] },
@@ -179,45 +177,17 @@ export function Dashboard() {
         return `${data.name}: <strong>${data.value}</strong> employees (${percent}%)`;
       }
     },
-    grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '3%',
-      containLabel: true
-    },
-    xAxis: {
-      type: 'value',
-      boundaryGap: [0, 0.01],
-      axisLabel: { show: false },
-      splitLine: { show: false },
-    },
-    yAxis: {
-      type: 'category',
-      data: processedDeptData.categories,
-      axisTick: { show: false },
-      axisLine: { show: false },
-    },
-    series: [
-      {
-        name: 'Employees',
-        type: 'bar',
-        data: processedDeptData.data,
-        barMaxWidth: 30,
-        label: {
-          show: true,
-          position: 'right',
-          color: 'inherit',
-          formatter: '{c}'
-        },
-      }
-    ]
+    grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+    xAxis: { type: 'value', boundaryGap: [0, 0.01], axisLabel: { show: false }, splitLine: { show: false } },
+    yAxis: { type: 'category', data: processedDeptData.categories, axisTick: { show: false }, axisLine: { show: false } },
+    series: [{ name: 'Employees', type: 'bar', data: processedDeptData.data, barMaxWidth: 30, label: { show: true, position: 'right', color: 'inherit', formatter: '{c}' } }]
   };
 
   const kpiCards = [
-    { title: 'Total Employees', value: summary?.totalEmployees, icon: Users },
-    { title: 'Present Today', value: summary?.presentToday, icon: Clock },
-    { title: 'Late Arrivals Today', value: summary?.lateArrivals, icon: AlertCircle },
-    { title: 'Avg Monthly Hours', value: `${summary?.avgWorkHours}h`, icon: TrendingUp },
+    { title: t('dashboard.totalEmployees'), value: summary?.totalEmployees, icon: Users },
+    { title: t('dashboard.presentToday'), value: summary?.presentToday, icon: Clock },
+    { title: t('dashboard.lateArrivalsToday'), value: summary?.lateArrivals, icon: AlertCircle },
+    { title: t('dashboard.avgMonthlyHours'), value: `${summary?.avgWorkHours}h`, icon: TrendingUp },
   ]
 
   const isLoading = isSummaryLoading || isAnalyticsLoading;
@@ -227,16 +197,12 @@ export function Dashboard() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">{t('nav.dashboard')}</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">Welcome back! Here's your attendance overview.</p>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">{t('dashboard.welcome')}</p>
         </div>
         <div className="flex space-x-3">
           <Button onClick={handleViewReports}><FileText className="h-4 w-4 mr-2" />{t('buttons.viewReports')}</Button>
           <Button variant="outline" onClick={handleExport} disabled={isExporting}>
-            {isExporting ? (
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-            ) : (
-              <Download className="h-4 w-4 mr-2" />
-            )}
+            {isExporting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Download className="h-4 w-4 mr-2" />}
             {t('buttons.export')}
           </Button>
         </div>
@@ -261,33 +227,17 @@ export function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         <motion.div className="lg:col-span-3" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.4 }}>
           <Card>
-            <CardHeader>
-              <CardTitle>Weekly Attendance Trend</CardTitle>
-            </CardHeader>
+            <CardHeader><CardTitle>{t('dashboard.weeklyTrend')}</CardTitle></CardHeader>
             <CardContent>
-              {isLoading ? (
-                <div className="flex items-center justify-center h-[300px]">
-                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                </div>
-              ) : (
-                <ReactECharts option={attendanceChartOptions} style={{ height: '300px' }} />
-              )}
+              {isLoading ? <div className="flex items-center justify-center h-[300px]"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div> : <ReactECharts option={attendanceChartOptions} style={{ height: '300px' }} />}
             </CardContent>
           </Card>
         </motion.div>
         <motion.div className="lg:col-span-2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5 }}>
           <Card>
-            <CardHeader>
-              <CardTitle>Employees by Department</CardTitle>
-            </CardHeader>
+            <CardHeader><CardTitle>{t('dashboard.byDepartment')}</CardTitle></CardHeader>
             <CardContent>
-              {isLoading ? (
-                <div className="flex items-center justify-center h-[300px]">
-                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                </div>
-              ) : (
-                <ReactECharts option={departmentChartOptions} style={{ height: '300px' }} />
-              )}
+              {isLoading ? <div className="flex items-center justify-center h-[300px]"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div> : <ReactECharts option={departmentChartOptions} style={{ height: '300px' }} />}
             </CardContent>
           </Card>
         </motion.div>

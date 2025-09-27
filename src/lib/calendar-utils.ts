@@ -1,4 +1,4 @@
-import { startOfMonth, endOfMonth, eachDayOfInterval, getDay, format } from 'date-fns';
+import { startOfMonth, endOfMonth, eachDayOfInterval, getDay, format, Locale } from 'date-fns';
 
 export const getMonthDays = (date: Date): Date[] => {
   const start = startOfMonth(date);
@@ -22,8 +22,8 @@ export const getMonthDays = (date: Date): Date[] => {
   return days;
 };
 
-export const getMonthName = (date: Date): string => {
-  return format(date, 'MMMM yyyy');
+export const getMonthName = (date: Date, locale?: Locale): string => {
+  return format(date, 'MMMM yyyy', { locale });
 };
 
 export const isSameMonth = (day: Date, month: Date): boolean => {

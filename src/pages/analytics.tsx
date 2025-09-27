@@ -5,8 +5,10 @@ import ReactECharts from 'echarts-for-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { analyticsApi } from '@/lib/api';
 import { Loader2 } from 'lucide-react';
+import { useLang } from '@/hooks/useLang';
 
 export function AnalyticsPage() {
+  const { t } = useLang();
   const { data: analyticsData, isLoading } = useQuery({
     queryKey: ['analyticsData'],
     queryFn: analyticsApi.getAnalyticsData,
@@ -16,7 +18,7 @@ export function AnalyticsPage() {
     tooltip: { trigger: 'item', formatter: '{a} <br/>{b}: {c} ({d}%)' },
     legend: { orient: 'vertical', left: 10, data: analyticsData?.departmentDistribution.map(d => d.name) },
     series: [{
-      name: 'Department',
+      name: t('employee.department'),
       type: 'pie',
       radius: ['50%', '70%'],
       avoidLabelOverlap: false,
@@ -31,7 +33,7 @@ export function AnalyticsPage() {
     tooltip: { trigger: 'item' },
     legend: { top: '5%', left: 'center' },
     series: [{
-      name: 'Status',
+      name: t('employee.status'),
       type: 'pie',
       radius: '50%',
       data: analyticsData?.statusDistribution || [],
@@ -62,12 +64,12 @@ export function AnalyticsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Analytics Dashboard</h1>
+      <h1 className="text-3xl font-bold">{t('analytics.title')}</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
           <Card>
-            <CardHeader><CardTitle>Employees by Department</CardTitle></CardHeader>
+            <CardHeader><CardTitle>{t('analytics.byDepartment')}</CardTitle></CardHeader>
             <CardContent>
               <ReactECharts option={departmentOptions} style={{ height: '400px' }} />
             </CardContent>
@@ -76,7 +78,7 @@ export function AnalyticsPage() {
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
           <Card>
-            <CardHeader><CardTitle>Active vs. Inactive Status</CardTitle></CardHeader>
+            <CardHeader><CardTitle>{t('analytics.statusDistribution')}</CardTitle></CardHeader>
             <CardContent>
               <ReactECharts option={statusOptions} style={{ height: '400px' }} />
             </CardContent>
@@ -86,8 +88,8 @@ export function AnalyticsPage() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
           <Card>
             <CardHeader>
-              <CardTitle>Average Working Hours (Monthly)</CardTitle>
-              <p className="text-sm text-muted-foreground">Placeholder data - requires attendance records.</p>
+              <CardTitle>{t('analytics.avgHours')}</CardTitle>
+              <p className="text-sm text-muted-foreground">{t('analytics.placeholder')}</p>
             </CardHeader>
             <CardContent>
               <ReactECharts option={placeholderOptions} style={{ height: '400px' }} />
@@ -98,8 +100,8 @@ export function AnalyticsPage() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
           <Card>
             <CardHeader>
-              <CardTitle>Performance Indicators</CardTitle>
-               <p className="text-sm text-muted-foreground">Placeholder data - requires performance metrics.</p>
+              <CardTitle>{t('analytics.performance')}</CardTitle>
+               <p className="text-sm text-muted-foreground">{t('analytics.performancePlaceholder')}</p>
             </CardHeader>
             <CardContent>
               <ReactECharts option={placeholderOptions} style={{ height: '400px' }} />
