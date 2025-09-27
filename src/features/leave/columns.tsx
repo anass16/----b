@@ -11,6 +11,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { MoreHorizontal, Edit, Trash2 } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useLang } from '@/hooks/useLang'
+import { useEventBus } from '@/hooks/useEventBus'
 
 interface ColumnsProps {
   onEdit: (request: LeaveRequest) => void;
@@ -30,12 +31,16 @@ const ActionButtons = ({ request, onEdit, onDelete }: { request: LeaveRequest } 
     const queryClient = useQueryClient()
     const { user } = useAuthStore()
     const { t } = useLang()
+    const { emit } = useEventBus();
     
     const mutation = useMutation({
         mutationFn: ({ id, status }: { id: string, status: LeaveRequest['status'] }) => leaveApi.updateStatus(id, status),
-        onSuccess: () => {
-            toast.success(t('alerts.leaveStatusUpdateSuccess'))
-            queryClient.invalidateQueries({ queryKey: ['leaveRequests'] })
+        onSuccess: (data) => {
+            if (data) {
+                toast.success(t('alerts.leaveStatusUpdateSuccess'))
+                queryClient.invalidateQueries({ queryKey: ['leaveRequests'] })
+                emit('notification', { type: 'leave:statusChanged', data });
+            }
         },
         onError: () => toast.error(t('alerts.leaveStatusUpdateFailed'))
     })

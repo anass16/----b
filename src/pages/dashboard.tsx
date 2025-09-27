@@ -13,11 +13,13 @@ import { localDB } from '@/lib/local-db'
 import { exportToCSV } from '@/lib/export'
 import { AttendanceRecord } from '@/types'
 import { formatWorkHours, formatDelay, formatDecimalHoursToHM } from '@/lib/utils'
+import { useEventBus } from '@/hooks/useEventBus'
 
 export function Dashboard() {
   const { t, currentLanguage } = useLang()
   const navigate = useNavigate()
   const [isExporting, setIsExporting] = useState(false)
+  const { emit } = useEventBus();
 
   const { data: summary, isLoading: isSummaryLoading } = useQuery({
     queryKey: ['analyticsSummary'],
@@ -121,10 +123,14 @@ export function Dashboard() {
         headerKeys.daysWorked, headerKeys.daysAbsent, headerKeys.totalHours, headerKeys.avgDelay,
         headerKeys.lateDays, headerKeys.minorDelays, headerKeys.holidaysWorked
       ];
-
-      exportToCSV(exportData, orderedHeaders, `attendance_${monthName}_${year}.csv`);
+      
+      const fileName = `attendance_${monthName}_${year}.csv`;
+      exportToCSV(exportData, orderedHeaders, fileName);
+      
       toast.dismiss(toastId);
       toast.success(t('alerts.exportSuccess'));
+      emit('notification', { type: 'report:exported', data: { fileName } });
+
     } catch (error) {
       toast.dismiss(toastId);
       toast.error(t('alerts.exportFailed'));

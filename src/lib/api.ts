@@ -1,5 +1,5 @@
 import { localDB } from './local-db';
-import { User, AttendanceRecord, LeaveRequest } from './data';
+import { User, AttendanceRecord, LeaveRequest, Notification } from './data';
 import { startOfWeek, endOfWeek, eachDayOfInterval, format, startOfMonth, endOfMonth } from 'date-fns';
 
 // Mock holidays for demonstration
@@ -213,3 +213,11 @@ export const analyticsApi = {
     return { departmentDistribution, statusDistribution, weeklyAttendanceTrend };
   }
 }
+
+export const notificationApi = {
+  getNotifications: (userId: string) => localDB.notifications.findMany(userId),
+  create: (data: Omit<Notification, 'id' | 'createdAt' | 'isRead'>) => localDB.notifications.create(data),
+  markAsRead: (id: string) => localDB.notifications.markAsRead(id),
+  markAllAsRead: (userId: string) => localDB.notifications.markAllAsRead(userId),
+  deleteAll: (userId: string) => localDB.notifications.deleteAll(userId),
+};

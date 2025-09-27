@@ -337,5 +337,14 @@
     "invalidDate": "Date invalide",
     "endDateAfterStart": "La date de fin ne peut pas être antérieure à la date de début.",
     "reasonRequired": "Le motif est requis."
+  },
+  "notifications": {
+    "markAllRead": "Marquer comme lus",
+    "clearAll": "Tout effacer",
+    "empty": "Vous n'avez aucune nouvelle notification.",
+    "employeeAdded": "Le nouvel employé {{name}} a été ajouté.",
+    "leaveSubmitted": "Une demande de congé a été soumise par {{name}}.",
+    "leaveStatusChanged": "La demande de congé pour {{name}} a été {{status}}.",
+    "reportExported": "Le rapport '{{name}}' a été exporté avec succès."
   }
 }

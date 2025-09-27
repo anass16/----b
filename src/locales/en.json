@@ -337,5 +337,14 @@
     "invalidDate": "Invalid date",
     "endDateAfterStart": "End date cannot be before start date.",
     "reasonRequired": "Reason is required."
+  },
+  "notifications": {
+    "markAllRead": "Mark all as read",
+    "clearAll": "Clear all",
+    "empty": "You have no new notifications.",
+    "employeeAdded": "New employee {{name}} has been added.",
+    "leaveSubmitted": "A leave request has been submitted by {{name}}.",
+    "leaveStatusChanged": "Leave request for {{name}} has been {{status}}.",
+    "reportExported": "Report '{{name}}' has been exported successfully."
   }
 }

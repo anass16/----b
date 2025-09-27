@@ -14,6 +14,7 @@ import { GenericReasonSelector } from '@/components/shared/GenericReasonSelector
 import { useLang } from '@/hooks/useLang'
 import { LeaveRequest } from '@/types'
 import { EmployeeSelector } from '@/components/shared/EmployeeSelector'
+import { useEventBus } from '@/hooks/useEventBus'
 
 interface LeaveFormProps {
   leaveRequestToEdit?: LeaveRequest | null;
@@ -24,6 +25,7 @@ export function LeaveForm({ leaveRequestToEdit, onFinished }: LeaveFormProps) {
   const queryClient = useQueryClient()
   const { user, role } = useAuthStore()
   const { t } = useLang()
+  const { emit } = useEventBus();
 
   const formSchema = z.object({
     id: z.string().optional(),
@@ -63,10 +65,15 @@ export function LeaveForm({ leaveRequestToEdit, onFinished }: LeaveFormProps) {
       }
       return leaveApi.create(data);
     },
-    onSuccess: () => {
-      toast.success(t(leaveRequestToEdit ? 'alerts.saveSuccess' : 'alerts.submitRequestSuccess'));
-      queryClient.invalidateQueries({ queryKey: ['leaveRequests'] });
-      onFinished();
+    onSuccess: (data) => {
+      if (data) {
+        toast.success(t(leaveRequestToEdit ? 'alerts.saveSuccess' : 'alerts.submitRequestSuccess'));
+        queryClient.invalidateQueries({ queryKey: ['leaveRequests'] });
+        if (!leaveRequestToEdit) {
+            emit('notification', { type: 'leave:submitted', data });
+        }
+        onFinished();
+      }
     },
     onError: (error) => {
       toast.error(error.message || t('alerts.error'));

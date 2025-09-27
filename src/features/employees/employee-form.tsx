@@ -11,6 +11,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import toast from 'react-hot-toast'
 import { useLang } from '@/hooks/useLang'
+import { useEventBus } from '@/hooks/useEventBus'
 
 interface EmployeeFormProps {
   employee: User | null
@@ -20,6 +21,7 @@ interface EmployeeFormProps {
 export function EmployeeForm({ employee, onFinished }: EmployeeFormProps) {
   const queryClient = useQueryClient()
   const { t } = useLang();
+  const { emit } = useEventBus();
 
   const formSchema = z.object({
     name: z.string().min(2, t('validation.nameMin')),
@@ -60,11 +62,14 @@ export function EmployeeForm({ employee, onFinished }: EmployeeFormProps) {
       }
       return employeeApi.create({ ...values, role: 'EMPLOYEE' })
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast.success(t(employee ? 'alerts.employeeUpdateSuccess' : 'alerts.employeeCreateSuccess'))
       queryClient.invalidateQueries({ queryKey: ['employees'] })
       if (employee) {
         queryClient.invalidateQueries({ queryKey: ['employee', employee.matricule] });
+      }
+      if (!employee && data) {
+        emit('notification', { type: 'employee:created', data });
       }
       onFinished()
     },

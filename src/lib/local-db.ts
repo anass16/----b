@@ -1,5 +1,5 @@
 import { User, initialMockEmployees, initialMockLeaveRequests } from '@/lib/data';
-import { LeaveRequest, AttendanceRecord } from "@/types";
+import { LeaveRequest, AttendanceRecord, Notification } from "@/types";
 
 const DB_STORAGE_KEY = 'hr_app_database';
 
@@ -7,25 +7,30 @@ interface Database {
   employees: User[];
   leaveRequests: LeaveRequest[];
   attendance: AttendanceRecord[];
+  notifications: Notification[];
 }
 
 // --- Private Functions ---
 
 function readDatabase(): Database {
+  const defaults: Database = {
+    employees: initialMockEmployees,
+    leaveRequests: initialMockLeaveRequests,
+    attendance: [],
+    notifications: [],
+  };
   try {
     const rawData = localStorage.getItem(DB_STORAGE_KEY);
     if (rawData) {
-      return JSON.parse(rawData);
+      const parsedData = JSON.parse(rawData);
+      // Merge parsed data with defaults to ensure all keys exist, especially `notifications` for older storage formats.
+      return { ...defaults, ...parsedData };
     }
   } catch (error) {
     console.error("Failed to parse database from localStorage", error);
   }
   // Return default structure if not found or error
-  return { 
-    employees: initialMockEmployees, 
-    leaveRequests: initialMockLeaveRequests,
-    attendance: [],
-  };
+  return defaults;
 }
 
 function writeDatabase(db: Database): void {
@@ -39,6 +44,7 @@ function initializeDatabase() {
             employees: initialMockEmployees,
             leaveRequests: initialMockLeaveRequests,
             attendance: [],
+            notifications: [],
         });
     }
 }
@@ -205,6 +211,56 @@ export const localDB = {
         });
         writeDatabase(db);
         return updatedRecord;
+    },
+  },
+  notifications: {
+    async findMany(userId: string): Promise<Notification[]> {
+      await delay(150);
+      const db = readDatabase();
+      return db.notifications.filter(n => n.userId === userId).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    },
+    async create(data: Omit<Notification, 'id' | 'createdAt' | 'isRead'>): Promise<Notification> {
+      await delay(50);
+      const db = readDatabase();
+      const newNotification: Notification = {
+        ...data,
+        id: `N${Date.now()}${Math.random()}`,
+        createdAt: new Date().toISOString(),
+        isRead: false,
+      };
+      db.notifications.unshift(newNotification);
+      writeDatabase(db);
+      return newNotification;
+    },
+    async markAsRead(id: string): Promise<Notification | undefined> {
+      await delay(50);
+      const db = readDatabase();
+      let updatedNotification: Notification | undefined;
+      db.notifications = db.notifications.map(n => {
+        if (n.id === id) {
+          updatedNotification = { ...n, isRead: true };
+          return updatedNotification;
+        }
+        return n;
+      });
+      writeDatabase(db);
+      return updatedNotification;
+    },
+    async markAllAsRead(userId: string): Promise<{ success: boolean }> {
+      await delay(100);
+      const db = readDatabase();
+      db.notifications.forEach(n => {
+        if (n.userId === userId) n.isRead = true;
+      });
+      writeDatabase(db);
+      return { success: true };
+    },
+    async deleteAll(userId: string): Promise<{ success: boolean }> {
+      await delay(100);
+      const db = readDatabase();
+      db.notifications = db.notifications.filter(n => n.userId !== userId);
+      writeDatabase(db);
+      return { success: true };
     },
   },
   auth: {

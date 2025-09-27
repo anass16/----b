@@ -16,6 +16,7 @@ import { AnalyticsPage } from '@/pages/analytics'
 import { AttendancePage } from '@/pages/attendance'
 import { EmployeeProfilePage } from '@/pages/employee-profile'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useNotifications } from './hooks/useNotifications'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -44,6 +45,7 @@ function App() {
 }
 
 function MainApp() {
+  useNotifications(); // Initialize notification listeners
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
       <Sidebar />

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Search, Bell, User, Globe, LogOut } from 'lucide-react'
+import { Search, Bell, User, Globe, LogOut, MailCheck, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -19,6 +19,9 @@ import { OfflineClockWidget } from './OfflineClockWidget'
 import { useClockStore } from '@/store/clock'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
+import { useNotificationStore } from '@/store/notifications'
+import { NotificationItem } from './NotificationItem'
+import { ScrollArea } from '../ui/scroll-area'
 
 export function Header() {
   const { currentLanguage, setLanguage, t } = useLang()
@@ -26,6 +29,7 @@ export function Header() {
   const { user, logout } = useAuthStore()
   const navigate = useNavigate()
   const { hour12, setHour12 } = useClockStore()
+  const { notifications, unreadCount, markAsRead, markAllAsRead, clearAll } = useNotificationStore();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -39,6 +43,18 @@ export function Header() {
   const handleLogout = () => {
     logout()
     navigate('/login')
+  }
+
+  const handleMarkAsRead = (id: string) => {
+    if(user) markAsRead(id, user.matricule);
+  }
+  
+  const handleMarkAllRead = () => {
+    if(user) markAllAsRead(user.matricule);
+  }
+
+  const handleClearAll = () => {
+    if(user) clearAll(user.matricule);
   }
 
   return (
@@ -83,20 +99,33 @@ export function Header() {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="relative">
               <Bell className="h-5 w-5" />
-              <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 text-xs">
-                3
-              </Badge>
+              {unreadCount > 0 && (
+                <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs">
+                  {unreadCount}
+                </Badge>
+              )}
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-80">
-            <DropdownMenuLabel>{t('header.notifications')}</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              New employee added: John Doe
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              Attendance report for May is ready.
-            </DropdownMenuItem>
+          <DropdownMenuContent align="end" className="w-96 p-0">
+            <DropdownMenuLabel className="p-3 flex justify-between items-center">
+              {t('header.notifications')}
+              <div className="flex items-center gap-1">
+                <Button variant="ghost" size="sm" onClick={handleMarkAllRead} className="h-auto px-2 py-1 text-xs">{t('notifications.markAllRead')}</Button>
+                <Button variant="ghost" size="sm" onClick={handleClearAll} className="h-auto px-2 py-1 text-xs text-destructive">{t('notifications.clearAll')}</Button>
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator className="my-0" />
+            <ScrollArea className="h-[400px]">
+              {notifications.length > 0 ? (
+                notifications.map((n) => (
+                  <NotificationItem key={n.id} notification={n} onRead={handleMarkAsRead} />
+                ))
+              ) : (
+                <div className="text-center text-sm text-muted-foreground p-8">
+                  {t('notifications.empty')}
+                </div>
+              )}
+            </ScrollArea>
           </DropdownMenuContent>
         </DropdownMenu>
 
